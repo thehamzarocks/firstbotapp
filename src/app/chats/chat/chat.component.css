@@ -8,13 +8,21 @@ html, body
 
 #mainheading{
     text-align: center;   
+    display: flex;
+    justify-content:center;
+    align-content:center;
+    flex-direction:column;
+
+    font-size: 3vh;
     background-color: #f2f3b5;
+
     margin: 0 auto;
     width: 80%;
-    height: 20%;
+    height: 5vh;
     margin-top: 1vh;
     margin-bottom: 1vh;
 }
+
 #chatinput {    
     width: 80%;
     margin: 0 auto;
@@ -27,8 +35,24 @@ html, body
     height: 70vh;    
     background-color: #f9f9dc;
     margin-bottom: 1vh;
+    overflow: scroll;
 }
 
+.chatcontainer {
+    border: 2px solid #dedede;
+    background-color: #f1f1f1;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 10px 0;
+    font-size: 2vh;
+}
+
+.darker {
+    border-color: #ccc;
+    background-color: #ddd;
+}
+
+/* Prevent input zoom */
 input[type='text'],
 input[type='number'],
 textarea {
