@@ -28,3 +28,9 @@ html, body
     background-color: #f9f9dc;
     margin-bottom: 1vh;
 }
+
+input[type='text'],
+input[type='number'],
+textarea {
+    font-size: 16px;
+}
