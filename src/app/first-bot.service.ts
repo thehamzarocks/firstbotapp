@@ -3,6 +3,8 @@ import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { IStartConversationResponse } from './startconversationresponse';
 import { IReceiveActivityWholeResponse } from './receiveactivtywholeresponse';
+import { IDialogSequenceObject } from './dialogsequenceobject';
+import { IIntentObject } from './intentobject';
 
 const startConversationHttpOptions = {
   headers: new HttpHeaders({    
@@ -12,7 +14,7 @@ const startConversationHttpOptions = {
 
 const sendActivityHttpOptions = {
   headers: new HttpHeaders({    
-    'Authorization': 'Bearer 6Pak39YWbB0.cwA.6kg.O283ck7ACtGMI-R-Gqs6tLQreF0_eeCY0YPaKybleak',
+    // 'Authorization': 'Bearer 6Pak39YWbB0.cwA.6kg.O283ck7ACtGMI-R-Gqs6tLQreF0_eeCY0YPaKybleak',
     'Content-Type': 'application/json'
   })
 };
@@ -51,14 +53,38 @@ export class FirstBotService {
     return this.http.get<IReceiveActivityWholeResponse>(this.receiveActivityUrl,startConversationHttpOptions);
   }
 
-  ReceiveFromWit():Observable<any> {
-    var url: string =  'https://api.wit.ai/message?v=20180619&q=30%20degrees%20set';
+  ReceiveFromWit(input: string):Observable<any> {
+    var url: string =  'https://api.wit.ai/message?v=20180624&q=' + input;
 
 
     const headers = new HttpHeaders()
-      .set('Authorization', 'Bearer SNQHVUXQD7YCO6FUVA2ARFJZGZREWXY6');
-
+      .set('Authorization', 'Bearer M5HYQXSTM2EOPKAMSQ472TSMIDHGOWXQ');
+      
     return this.http.get(url,{headers:headers});
       
+  }
+
+  RetrieveFirstBotResponse (currentDialog: string, currentIntent: string): Observable<IIntentObject> {
+    // var dialogsequence: IDialogSequenceObject = {
+    //     dsname: "initial dialog sequence",
+    //     dialogs: [
+    //       {
+    //         dialog: "",
+    //         intents: [
+    //           {intent: "",
+    //            response: "Are you ready?",
+    //           newdialog: "asked ready"}
+    //         ]
+    //       }
+    //     ]
+    // };
+
+    var url: string = 'http://localhost:3000/retrieve';
+    var requestbody = {
+      "dialog": currentDialog,
+      "intent": currentIntent
+    }
+
+    return this.http.post<IIntentObject>(url, requestbody, sendActivityHttpOptions);
   }
 }

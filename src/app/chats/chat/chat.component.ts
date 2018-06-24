@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { FirstBotService } from '../../first-bot.service';
+import { IIntentObject } from '../../intentobject';
 
 @Component({
   selector: 'app-chat',
@@ -7,11 +9,46 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ChatComponent implements OnInit {
 
-  constructor() { }
+  constructor(private _firstbotservice:FirstBotService) {
+    this.messages = new Array<string>();
+    this.currentDialog = "";
+    this.currentIntent = "";
+   }
+
+  messages: string[];
+  currentDialog: string = "";
+  currentIntent: string = "";  
+  inputText: string = "";
 
   ngOnInit() {
+    this._firstbotservice.RetrieveFirstBotResponse(this.currentDialog, this.currentIntent)
+    .subscribe(response => {
+      var intentObject: IIntentObject;        
+      intentObject = response;
+      console.log(intentObject.response);
+      this.messages.push(intentObject.response);
+      this.currentDialog = intentObject.nextDialog;
+      // this.currentIntent = "yes";
+    });
   }
 
+  CallBot() : void {
+    this.messages.push(this.inputText);
+    this._firstbotservice.ReceiveFromWit(this.inputText)
+      .subscribe(response => {
+        console.log(response);
+        var intent: string = response.entities.yes_no[0].value;
+        this.currentIntent = intent;
+        this._firstbotservice.RetrieveFirstBotResponse(this.currentDialog, this.currentIntent)
+          .subscribe(chatresponse => {
+            var intentObject: IIntentObject;        
+            intentObject = chatresponse;
+            console.log(intentObject.response);
+            this.currentDialog = intentObject.nextDialog;
+            this.messages.push(intentObject.response);
+          })
+      })
+  }
 }
 
 // Function to replace one element with another

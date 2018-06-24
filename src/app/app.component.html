@@ -8,10 +8,11 @@
   <h2>The product id is {{conversationId}}</h2>
   <input type='text' [(ngModel)]='inputText' />                
   <h2>The input is {{inputText}}</h2>
-  <button (click)='SendActivity(inputText)'>Send Activity</button>
-  <button (click)='ReceiveActivity()'>Receive Activity</button>
+  <button (click)='ReceiveFromWit(inputText)'>Receive from Wit</button>
   <h2> The response text is {{responseText}}</h2>
-  <button (click)='ReceiveFromWit()'>Receive from Wit</button>
+  
+  
+  <button (click)='ReceiveBotResponse()'>Receive Bot Response</button>
 </div>
 
 

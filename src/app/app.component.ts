@@ -3,6 +3,7 @@ import { FirstBotService } from './first-bot.service';
 import { Observable } from 'rxjs';
 import { IStartConversationResponse } from './startconversationresponse';
 import { IReceiveActivityWholeResponse } from './receiveactivtywholeresponse';
+import { IIntentObject } from './intentobject';
 
 @Component({
   selector: 'app-root',
@@ -16,6 +17,11 @@ export class AppComponent {
   conversationId = "hello";
   responseText = "";
   inputText = "";
+
+  currentDialog: string = "";
+  currentIntent: string = "";  
+
+
 
   StartConversation() {
       this._firstbotservice.StartConversation()
@@ -35,9 +41,23 @@ export class AppComponent {
       });
   }
 
-  ReceiveFromWit() {
-    this._firstbotservice.ReceiveFromWit()
-      .subscribe(response => console.log(response));
+  ReceiveFromWit(input: string) {
+    this._firstbotservice.ReceiveFromWit(input)
+      .subscribe(response => {
+        var intent: string = response.entities.yes_no[0].value;
+        this.currentIntent = intent;
+      });
+  }
+
+  ReceiveBotResponse() {
+    this._firstbotservice.RetrieveFirstBotResponse(this.currentDialog, this.currentIntent)
+      .subscribe(response => {
+        var intentObject: IIntentObject;        
+        intentObject = response;
+        console.log(intentObject.response);
+        this.currentDialog = intentObject.nextDialog
+        // this.currentIntent = "yes";
+      });
   }
   
 }
