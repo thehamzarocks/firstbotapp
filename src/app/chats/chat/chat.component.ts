@@ -18,7 +18,10 @@ export class ChatComponent implements OnInit {
   user: Observable<firebase.User>;
   items: Observable<any[]>;
 
+  database;
+
   constructor(private _firstbotservice:FirstBotService, db: AngularFirestore) {
+    this.database = db;
     this.items = db.collection('/DialogSequences').valueChanges();
 
     var docRef = db.collection('/DialogSequences').ref;
@@ -42,15 +45,27 @@ export class ChatComponent implements OnInit {
   inputText: string = "";
 
   ngOnInit() {
-    this._firstbotservice.RetrieveFirstBotResponse(this.currentDialog, this.currentIntent)
-    .subscribe(response => {
-      var intentObject: IIntentObject;        
-      intentObject = response;
-      console.log(intentObject.response);
-      this.messages.push(intentObject.response);
-      this.currentDialog = intentObject.nextDialog;
-      // this.currentIntent = "yes";
+    // this._firstbotservice.RetrieveFirstBotResponse(this.currentDialog, this.currentIntent)
+    // .subscribe(response => {
+    //   var intentObject: IIntentObject;        
+    //   intentObject = response;
+    //   console.log(intentObject.response);
+    //   this.messages.push(intentObject.response);
+    //   this.currentDialog = intentObject.nextDialog;
+    //   // this.currentIntent = "yes";
+    // });
+
+    var docRef = this.database.collection('/DialogSequences').ref;
+    var query = docRef.where("dialog", "==", "");
+    query.get().then((querySnapShot) => {
+        querySnapShot.forEach((doc) => {
+          var intentObject: IIntentObject;
+          intentObject = doc.data();          
+          this.messages.push(intentObject.response);
+          this.currentDialog = intentObject.nextDialog;          
+        });
     });
+
   }
 
   CallBot() : void {
@@ -62,15 +77,19 @@ export class ChatComponent implements OnInit {
         console.log(response);
         var intent: string = response.entities.yes_no[0].value;
         this.currentIntent = intent;
-        this._firstbotservice.RetrieveFirstBotResponse(this.currentDialog, this.currentIntent)
-          .subscribe(chatresponse => {
-            var intentObject: IIntentObject;        
-            intentObject = chatresponse;
-            console.log(intentObject.response);
+
+        var docRef = this.database.collection('/DialogSequences').ref;
+        var query = docRef.where("dialog", "==", this.currentDialog).where("intent", "==", this.currentIntent);
+        query.get().then((querySnapShot) => {
+          querySnapShot.forEach((doc) => {
+            var intentObject: IIntentObject;
+            intentObject = doc.data();          
             this.currentDialog = intentObject.nextDialog;
             this.messages.push(intentObject.response);
-          })
-      })
+          });
+        });
+        
+    });
   }
 }
 
