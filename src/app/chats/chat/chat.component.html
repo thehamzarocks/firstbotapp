@@ -1,22 +1,20 @@
 <div class="container-fluid">
   <h1 id="mainheading">FirstBot</h1>
 
+  <ul>
+      <li *ngFor="let item of items | async">
+          <pre>{{ item | json }}</pre>
+      </li>
+  </ul>
   <!-- Need to make alternate containers darker -->
-  <div id="testdiv">    
-    <!-- <div class="chatcontainer" *ngFor="let message of messages; let odd = odd; let even = even">
-      <div *ngIf="even" class="chatcontainer light">
-          <p>{{message}}</p>
-      </div>      
-      <div *ngIf="odd" class="chatcontainer dark">
-          <p>{{message}}</p>
-      </div>      
-    </div> -->
+  <!-- <div id="testdiv">    
+    
 
     <div *ngFor="let message of messages; let odd=odd; let even=even" [ngClass]="(even)?'chatcontainer':'chatcontainer darker'"> 
       <p>{{message}}</p>
     </div>
   
-  </div>   
+  </div>    -->
 
   
   

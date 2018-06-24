@@ -1,6 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { FirstBotService } from '../../first-bot.service';
 import { IIntentObject } from '../../intentobject';
+import { AngularFirestore } from 'angularfire2/firestore';
+import { AngularFireDatabase } from 'angularfire2/database';
+import { AngularFireAuth } from 'angularfire2/auth';
+import * as firebase from 'firebase/app';
+import { Observable } from 'rxjs/internal/Observable';
+
 
 @Component({
   selector: 'app-chat',
@@ -9,7 +15,22 @@ import { IIntentObject } from '../../intentobject';
 })
 export class ChatComponent implements OnInit {
 
-  constructor(private _firstbotservice:FirstBotService) {
+  user: Observable<firebase.User>;
+  items: Observable<any[]>;
+
+  constructor(private _firstbotservice:FirstBotService, db: AngularFirestore) {
+    this.items = db.collection('/DialogSequences').valueChanges();
+
+    var docRef = db.collection('/DialogSequences').ref;
+    var query = docRef.where("dialog", "==", "");
+    query.get().then((querySnapShot) => {
+        querySnapShot.forEach((doc) => {
+          console.log(`${doc.id} => ${doc.data().response}`);
+        });
+    });
+  
+  
+
     this.messages = new Array<string>();
     this.currentDialog = "";
     this.currentIntent = "";
@@ -34,7 +55,9 @@ export class ChatComponent implements OnInit {
 
   CallBot() : void {
     this.messages.push(this.inputText);
-    this._firstbotservice.ReceiveFromWit(this.inputText)
+    var input = this.inputText;
+    this.inputText = "";
+    this._firstbotservice.ReceiveFromWit(input)
       .subscribe(response => {
         console.log(response);
         var intent: string = response.entities.yes_no[0].value;
