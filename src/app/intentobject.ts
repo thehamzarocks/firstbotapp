@@ -5,4 +5,6 @@ export interface IIntentObject {
     intent: string;
     response: string;
     nextDialog: string;
+    nextds: string;
+    being: string;
 }

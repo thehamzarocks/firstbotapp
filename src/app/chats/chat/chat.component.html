@@ -3,7 +3,7 @@
 
   
   <!-- Need to make alternate containers darker -->
-  <div id="testdiv">    
+  <div id="testdiv" #scrollMe [scrollTop]="scrollMe.scrollHeight">    
     <!-- <div class="chatcontainer" *ngFor="let message of messages; let odd = odd; let even = even">
       <div *ngIf="even" class="chatcontainer light">
           <p>{{message}}</p>
@@ -14,7 +14,8 @@
     </div> -->
 
     <div *ngFor="let message of messages; let odd=odd; let even=even" [ngClass]="(even)?'chatcontainer':'chatcontainer darker'"> 
-      <p>{{message}}</p>
+      <p>{{message.response}}</p>
+      <span class="beingname">{{message.being}}</span>
     </div>
   
   </div>   

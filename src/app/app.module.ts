@@ -23,7 +23,8 @@ import { environment } from '../environments/environment';
     HttpClientModule,
     FormsModule,
     AngularFireModule.initializeApp(environment.firebase),
-    AngularFirestoreModule,    
+    AngularFirestoreModule,
+    
   ],
   providers: [FirstBotService],
   bootstrap: [ChatComponent]
