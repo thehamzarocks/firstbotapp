@@ -1,9 +1,9 @@
-<div class="container-fluid">
+<div class="container">
   <h1 id="mainheading">FirstBot</h1>
 
   
   <!-- Need to make alternate containers darker -->
-  <div id="testdiv" #scrollMe [scrollTop]="scrollMe.scrollHeight">    
+  <div id="testdiv" #scrollMe [scrollTop]="scrollMe.scrollHeight" >    
     <!-- <div class="chatcontainer" *ngFor="let message of messages; let odd = odd; let even = even">
       <div *ngIf="even" class="chatcontainer light">
           <p>{{message}}</p>
@@ -14,7 +14,7 @@
     </div> -->
 
     <div *ngFor="let message of messages; let odd=odd; let even=even" [ngClass]="(even)?'chatcontainer':'chatcontainer darker'"> 
-      <p>{{message.response}}</p>
+      <p>{{message.currentText}}</p>
       <span class="beingname">{{message.being}}</span>
     </div>
   
@@ -25,7 +25,7 @@
   <div class="input-group">
       <span class="input-group-addon"><i class="glyphicon glyphicon-retweet"></i></span>
       <div class="wrapper">
-        <input class="form-control" [(ngModel)]='inputText' placeholder="Type here" name="firstname" type="text" />
+        <input autofocus (keyup)="onKey($event)" class="form-control" [(ngModel)]='inputText' placeholder="Type here" name="firstname" type="text" />
         <!-- <div id="infoi"> Will be used later for switching chats
             <i class="glyphicon glyphicon-plus-sign"></i>
             <i class="glyphicon glyphicon-plus-sign"></i>

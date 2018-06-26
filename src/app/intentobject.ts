@@ -7,4 +7,5 @@ export interface IIntentObject {
     nextDialog: string;
     nextds: string;
     being: string;
+    fallBack: string;
 }
