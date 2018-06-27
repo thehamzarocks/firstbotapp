@@ -1,5 +1,4 @@
 import { Component, OnInit, AfterViewChecked, ViewChild, ElementRef } from '@angular/core';
-import { FirstBotService } from '../../first-bot.service';
 import { IIntentObject } from '../../intentobject';
 import { AngularFirestore } from 'angularfire2/firestore';
 import { AngularFireDatabase } from 'angularfire2/database';
@@ -9,6 +8,7 @@ import { Observable } from 'rxjs/internal/Observable';
 import { ReturnStatement } from '@angular/compiler';
 import { IMessageObject } from '../../messageobject';
 import { EMPTY } from 'rxjs';
+import { ChatService } from './chat.service';
 
 
 @Component({
@@ -22,22 +22,16 @@ export class ChatComponent implements OnInit {
   user: Observable<firebase.User>;
   items: Observable<any[]>;
 
+  messages: IMessageObject[]; //list of messages used for displaying in template
+  message: IMessageObject; 
+  inputText: string = "";
+
+  fallBack: string; //Used when the bot doesn't understand our input.
+
   database;
 
-  constructor(private _firstbotservice:FirstBotService, db: AngularFirestore) {
+  constructor(private _firstbotservice:ChatService, db: AngularFirestore) {
     this.database = db;
-    this.items = db.collection('/DialogSequences').valueChanges();
-
-    // var docRef = db.collection('/DialogSequences').ref;
-    // var query = docRef.where("dialog", "==", "");
-    // query.get().then((querySnapShot) => {
-    //     querySnapShot.forEach((doc) => {
-    //       console.log(`${doc.id} => ${doc.data().response}`);
-    //     });
-    // });
-  
-    
-  
 
     this.messages = new Array<IMessageObject>();
 
@@ -46,110 +40,94 @@ export class ChatComponent implements OnInit {
       currentDialog: "",
       currentIntent: "",
       currentText: "",
-      being: "Enigma"
+      being: ""
     };   
     
     this.fallBack = "I can't help you with that right now."
    }
-
-  messages: IMessageObject[];
-  message: IMessageObject;
-  inputText: string = "";
-
-  fallBack: string;
   
-
-  
-  ngOnInit() {
-    // this._firstbotservice.RetrieveFirstBotResponse(this.currentDialog, this.currentIntent)
-    // .subscribe(response => {
-    //   var intentObject: IIntentObject;        
-    //   intentObject = response;
-    //   console.log(intentObject.response);
-    //   this.messages.push(intentObject.response);
-    //   this.currentDialog = intentObject.nextDialog;
-    //   // this.currentIntent = "yes";
-    // });
-
-    var docRef = this.database.collection('/DialogSequences').ref;
-    var query = docRef.where("dsname", "==", "dream enigma start").where("dialog", "==", "");
-    query.get().then((querySnapShot) => {
-        querySnapShot.forEach((doc) => {          
-          var receivedMessage = this.getMessage(doc);
-          console.log(this.message.currentdsName, this.message.currentDialog, this.message.currentIntent);
-          this.messages.push(receivedMessage);
-          this.message = receivedMessage;          
-        });
-    });
-
+  ngOnInit() {    
+    
+    this.RetrieveDialog();
   }
 
+  //Called when the user hits enter
   CallBot() : void {
+
     if(this.inputText == "") {
       return;
     }
     
-    var sentMessage: IMessageObject = {      
+    this.sendMessage();
+
+    var input = this.inputText;
+    this.inputText = "";
+    
+    this._firstbotservice.ReceiveFromWit(input)
+      .subscribe(response => {
+        if(response.entities.yes_no == undefined) {
+          this.HandleUnrecognizedResponse();
+        }
+        else {
+          console.log(response.entities.yes_no);
+          var intent: string = response.entities.yes_no[0].value;
+          this.message.currentIntent = intent;
+          this.RetrieveDialog();
+        }
+    },
+      error => {
+        console.log("Error getting reponse from wit");
+      });
+  }
+
+  private sendMessage() {
+    var sentMessage: IMessageObject = {
       currentdsName: "",
       currentDialog: "",
       currentIntent: "",
       currentText: this.inputText,
-      being: "You",      
-    }    
-    
-    this.messages.push(sentMessage);    
-    var input = this.inputText;
-    this.inputText = "";
-    this._firstbotservice.ReceiveFromWit(input)
-      .subscribe(response => {
-        if(response.entities.yes_no == undefined) {          
-          var receivedMessage: IMessageObject = {
-            currentdsName: this.message.currentdsName,
-            currentDialog: this.message.currentDialog,
-            currentIntent: this.message.currentIntent,
-            currentText: this.fallBack,
-            being: this.message.being,
-          };
-          this.messages.push(receivedMessage);
-        }
-        else {
-          console.log(response.entities.yes_no);
-          var intent: string = response.entities.yes_no[0].value;          
-          this.message.currentIntent = intent;
-          this.RetrieveDialog();
-        }
-    });
+      being: "You",
+    };
+    this.messages.push(sentMessage);
   }
 
+  //if the input is unrecognized by wit or the bot, use the previous dialog's fallback message
+  private HandleUnrecognizedResponse() {
+    var receivedMessage: IMessageObject = {
+      currentdsName: this.message.currentdsName,
+      currentDialog: this.message.currentDialog,
+      currentIntent: this.message.currentIntent,
+      currentText: this.fallBack,
+      being: this.message.being,
+    };
+    this.messages.push(receivedMessage);
+  }
+
+
+  //connects to firestore, gets the object, and assigns it to a message object 
   RetrieveDialog(): void {
     console.log(this.message.currentdsName, this.message.currentDialog, this.message.currentIntent);
     var docRef = this.database.collection('/DialogSequences').ref;
-        var query = docRef.where("dsname", "==", this.message.currentdsName).where("dialog", "==", this.message.currentDialog).where("intent", "==", this.message.currentIntent);
-        query.get().then((querySnapShot) => {          
-          if(querySnapShot.docs.length == 0) {
-            var receivedMessage: IMessageObject = {
-              currentdsName: this.message.currentdsName,
-              currentDialog: this.message.currentDialog,
-              currentIntent: this.message.currentIntent,
-              currentText: this.fallBack,
-              being: this.message.being,
-            };
-            this.messages.push(receivedMessage);
-          }
+    var query = docRef.where("dsname", "==", this.message.currentdsName).where("dialog", "==", this.message.currentDialog).where("intent", "==", this.message.currentIntent);
+    query.get().then((querySnapShot) => {
+      if(querySnapShot.docs.length == 0) {
+        this.HandleUnrecognizedResponse();
+      }
+       
+      else {
+        var doc = querySnapShot.docs[0];
+        var receivedMessage = this.getMessage(doc);
 
-          querySnapShot.forEach((doc) => {
-            
-            var receivedMessage = this.getMessage(doc);
-
-            this.messages.push(receivedMessage);
-            this.message = receivedMessage;
-            
-            if(this.message.currentDialog == "") {
-              this.message.currentIntent = "";
-              this.RetrieveDialog();
-            }
-          });
-        });
+        this.messages.push(receivedMessage);
+        this.message = receivedMessage;
+        
+        if(this.message.currentDialog == "") {
+          this.message.currentIntent = "";
+          this.RetrieveDialog();
+        }
+      }
+      
+    });
   }
 
   private getMessage(doc: any) {
@@ -163,12 +141,10 @@ export class ChatComponent implements OnInit {
       being: intentObject.being,            
     };
     this.fallBack = intentObject.fallBack;
-    return receivedMessage;
-    
+    return receivedMessage;    
   }
 
-  onKey(event: any) { // without type info
-    console.log(event);
+  onKey(event: any) { // without type info    
     if(event.keyCode == 13)
     this.CallBot();
   }

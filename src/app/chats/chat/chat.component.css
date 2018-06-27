@@ -4,7 +4,7 @@ html, body
     min-height: 100%;
     margin: 0;
     padding: 0;    
-    background-image: url("/assets/background.jpg");    
+    background-color: #f1ebeb !important;
 }
 
 #mainheading{
@@ -15,8 +15,8 @@ html, body
     flex-direction:column;
 
     font-size: 3vh;
-    background-color: #f2f3b5;
-
+    /* background-color: #f2f3b5; */
+    background-color: #e8e592;
     margin: 0 auto;
     
     height: 5vh;
@@ -31,7 +31,8 @@ html, body
 #testdiv {    
     margin: 0 auto;       
     height: 70vh;
-    background-color: #f9f9dc;
+    /* background-color: #f9f9dc; */
+    background-color: #f1f5df;
     margin-bottom: 1vh;
     overflow: scroll;
     overflow-x: hidden;
