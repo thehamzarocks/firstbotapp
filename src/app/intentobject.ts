@@ -4,8 +4,8 @@ export interface IIntentObject {
     dialog: string;
     intent: string;
     response: string;
-    nextDialog: string;
+    nextdialog: string;
     nextds: string;
     being: string;
-    fallBack: string;
+    fallback: string;
 }

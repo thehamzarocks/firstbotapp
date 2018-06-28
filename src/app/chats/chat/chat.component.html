@@ -1,9 +1,21 @@
 <div class="container">  
   <h1 id="mainheading">FirstBot</h1>
-  <div class="alert alert-warning fade in alert-dismissible">
-      <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-      <strong>Dream Fading!</strong> Looks like your connection is weak.
+  <div *ngIf="badConnection" class="alert alert-warning fade in">      
+      <strong>Dream Fading!</strong> Weak Connection
     </div>
+
+    <button (click)="addData()">Add data</button>
+    <div class="input-group">
+      <span class="input-group-addon"><i class="glyphicon glyphicon-retweet"></i></span>
+      <div class="wrapper">
+        <input autofocus (keyup)="onKey($event)" class="form-control" [(ngModel)]='inputText' placeholder="Type here" name="firstname" type="text" />
+        <!-- <div id="infoi"> Will be used later for switching chats
+            <i class="glyphicon glyphicon-plus-sign"></i>
+            <i class="glyphicon glyphicon-plus-sign"></i>
+        </div> -->
+      </div>
+      <span class="input-group-addon" (click)='CallBot()'><i class="glyphicon glyphicon-circle-arrow-right"></i></span>
+  </div>
 
   
   <!-- Need to make alternate containers darker -->
@@ -17,7 +29,7 @@
       </div>      
     </div> -->
 
-    <div *ngFor="let message of messages; let odd=odd; let even=even" [ngClass]="(even)?'chatcontainer':'chatcontainer darker'"> 
+    <div *ngFor="let message of messages.slice().reverse(); let odd=odd; let even=even" [ngClass]="(even)?'chatcontainer':'chatcontainer darker'"> 
       <p>{{message.currentText}}</p>
       <span class="beingname">{{message.being}}</span>
     </div>
@@ -26,16 +38,6 @@
 
   
   
-  <div class="input-group">
-      <span class="input-group-addon"><i class="glyphicon glyphicon-retweet"></i></span>
-      <div class="wrapper">
-        <input autofocus (keyup)="onKey($event)" class="form-control" [(ngModel)]='inputText' placeholder="Type here" name="firstname" type="text" />
-        <!-- <div id="infoi"> Will be used later for switching chats
-            <i class="glyphicon glyphicon-plus-sign"></i>
-            <i class="glyphicon glyphicon-plus-sign"></i>
-        </div> -->
-      </div>
-      <span class="input-group-addon" (click)='CallBot()'><i class="glyphicon glyphicon-circle-arrow-right"></i></span>
-  </div>
+  
 
 </div>

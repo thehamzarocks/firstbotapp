@@ -30,7 +30,7 @@ html, body
 
 #testdiv {    
     margin: 0 auto;       
-    height: 70vh;
+    /* height: 70vh; */
     /* background-color: #f9f9dc; */
     background-color: #f1f5df;
     margin-bottom: 1vh;
@@ -67,18 +67,16 @@ textarea {
     font-size: 16px;
 }
 
-.wrapper {
-    position: relative;
-  }
 
-#infoi {
+
+/* #infoi {
     position: absolute;
     top: 0;
     left: 0;
     height: inherit;    
     
     z-index: 10;
-  }
+  } */
 
   .glyphicon-plus-sign {
       padding: 1vh;

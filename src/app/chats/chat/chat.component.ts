@@ -9,6 +9,7 @@ import { ReturnStatement } from '@angular/compiler';
 import { IMessageObject } from '../../messageobject';
 import { EMPTY } from 'rxjs';
 import { ChatService } from './chat.service';
+import { checkAndUpdateDirectiveDynamic } from '@angular/core/src/view/provider';
 
 
 @Component({
@@ -26,9 +27,36 @@ export class ChatComponent implements OnInit {
   message: IMessageObject; 
   inputText: string = "";
 
-  fallBack: string; //Used when the bot doesn't understand our input.
+  fallback: string; //Used when the bot doesn't understand our input.
 
   database;
+
+  inputDisabled: boolean;
+  badConnection: boolean; //shows notification if connection to wit is unsuccesful, pops the sent message and sets it back to the input text
+
+  addData() {
+    // Add a new document in collection "cities"
+    this.database.collection("dialogs").doc("15").set({
+      type: "regular response",
+      dsname: "fishing with red",
+      dialog: "asked lake choice",
+      intent: "golden lake",
+      statename: "",
+      statevalue: "",
+      being: "Red",
+      response: "We could use the money, but it won't be as fun :( Let's go.",
+      nextds: "lake shop",
+      nextdialog: "",
+      autofetch: "true",
+      fallback: ""
+    })
+    .then(function() {
+      console.log("Document successfully written!");
+    })
+    .catch(function(error) {
+      console.error("Error writing document: ", error);
+    });
+  }
 
   constructor(private _firstbotservice:ChatService, db: AngularFirestore) {
     this.database = db;
@@ -36,17 +64,20 @@ export class ChatComponent implements OnInit {
     this.messages = new Array<IMessageObject>();
 
     this.message = <IMessageObject>{
-      currentdsName: "dream enigma start",
-      currentDialog: "",
+      currentdsName: "initialize",
+      currentDialog: "welcome",
       currentIntent: "",
       currentText: "",
       being: ""
     };   
     
-    this.fallBack = "I can't help you with that right now."
+    this.fallback = "I can't help you with that right now."
    }
   
   ngOnInit() {    
+
+    this.inputDisabled = true;
+    this.badConnection = false;
     
     this.RetrieveDialog();
   }
@@ -54,7 +85,7 @@ export class ChatComponent implements OnInit {
   //Called when the user hits enter
   CallBot() : void {
 
-    if(this.inputText == "") {
+    if(this.inputText == "" || this.inputDisabled == true) {
       return;
     }
     
@@ -62,9 +93,11 @@ export class ChatComponent implements OnInit {
 
     var input = this.inputText;
     this.inputText = "";
+    this.inputDisabled = true;
     
     this._firstbotservice.ReceiveFromWit(input)
       .subscribe(response => {
+        this.badConnection = false;
         if(response.entities.yes_no == undefined) {
           this.HandleUnrecognizedResponse();
         }
@@ -77,6 +110,9 @@ export class ChatComponent implements OnInit {
     },
       error => {
         console.log("Error getting reponse from wit");
+        this.inputText = this.messages.pop().currentText;
+        this.badConnection = true;
+        this.inputDisabled = false;
       });
   }
 
@@ -97,17 +133,18 @@ export class ChatComponent implements OnInit {
       currentdsName: this.message.currentdsName,
       currentDialog: this.message.currentDialog,
       currentIntent: this.message.currentIntent,
-      currentText: this.fallBack,
+      currentText: this.fallback,
       being: this.message.being,
     };
     this.messages.push(receivedMessage);
+    this.inputDisabled = false;
   }
 
 
   //connects to firestore, gets the object, and assigns it to a message object 
   RetrieveDialog(): void {
     console.log(this.message.currentdsName, this.message.currentDialog, this.message.currentIntent);
-    var docRef = this.database.collection('/DialogSequences').ref;
+    var docRef = this.database.collection('/dialogs').ref;
     var query = docRef.where("dsname", "==", this.message.currentdsName).where("dialog", "==", this.message.currentDialog).where("intent", "==", this.message.currentIntent);
     query.get().then((querySnapShot) => {
       if(querySnapShot.docs.length == 0) {
@@ -125,6 +162,9 @@ export class ChatComponent implements OnInit {
           this.message.currentIntent = "";
           this.RetrieveDialog();
         }
+        else {
+          this.inputDisabled = false;
+        }
       }
       
     });
@@ -135,12 +175,12 @@ export class ChatComponent implements OnInit {
     intentObject = doc.data();
     var receivedMessage: IMessageObject = {
       currentdsName: intentObject.nextds,
-      currentDialog: intentObject.nextDialog,
+      currentDialog: intentObject.nextdialog,
       currentIntent: intentObject.intent,
       currentText: intentObject.response,
       being: intentObject.being,            
     };
-    this.fallBack = intentObject.fallBack;
+    this.fallback = intentObject.fallback;
     return receivedMessage;    
   }
 
