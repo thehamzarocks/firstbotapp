@@ -10,6 +10,7 @@ import { IMessageObject } from '../../messageobject';
 import { EMPTY } from 'rxjs';
 import { ChatService } from './chat.service';
 import { checkAndUpdateDirectiveDynamic } from '@angular/core/src/view/provider';
+import { stat } from 'fs';
 
 
 @Component({
@@ -36,17 +37,21 @@ export class ChatComponent implements OnInit {
 
   addData() {
     // Add a new document in collection "cities"
-    this.database.collection("dialogs").doc("15").set({
-      type: "regular response",
+    this.database.collection("dialogs").doc("20").set({
+      type: "compute node",
       dsname: "fishing with red",
       dialog: "asked lake choice",
       intent: "golden lake",
       statename: "",
       statevalue: "",
-      being: "Red",
-      response: "We could use the money, but it won't be as fun :( Let's go.",
-      nextds: "lake shop",
-      nextdialog: "",
+
+      operation: "set",
+      op1: "Lake Choice",
+      value: "Golden Lake",
+      // being: "Red",
+      // response: "We could use the money, but it won't be as fun :( Let's go.",
+      nextds: "fishing with red",
+      nextdialog: "set lake choice to golden lake",
       autofetch: "true",
       fallback: ""
     })
@@ -153,10 +158,16 @@ export class ChatComponent implements OnInit {
        
       else {
         var doc = querySnapShot.docs[0];
-        var receivedMessage = this.getMessage(doc);
+        var dialog: IIntentObject = doc.data();
+        if(dialog.type == "regular response") {
+          this.HandleRegularResponse(dialog);  
+        }
 
-        this.messages.push(receivedMessage);
-        this.message = receivedMessage;
+        else if(dialog.type == "compute node") {
+          this.HandleComputeNode(dialog);
+        }
+
+        
         
         if(this.message.currentDialog == "") {
           this.message.currentIntent = "";
@@ -170,9 +181,15 @@ export class ChatComponent implements OnInit {
     });
   }
 
-  private getMessage(doc: any) {
+  private HandleRegularResponse(dialog: any) {
+    var receivedMessage = this.getMessage(dialog);
+    this.messages.push(receivedMessage);
+    this.message = receivedMessage;
+  }
+
+  private getMessage(dialog: IIntentObject) {
     var intentObject: IIntentObject;
-    intentObject = doc.data();
+    intentObject = dialog;
     var receivedMessage: IMessageObject = {
       currentdsName: intentObject.nextds,
       currentDialog: intentObject.nextdialog,
@@ -183,6 +200,43 @@ export class ChatComponent implements OnInit {
     this.fallback = intentObject.fallback;
     return receivedMessage;    
   }
+
+
+  private HandleComputeNode(dialog: IIntentObject) {
+    var intentobject: IIntentObject = dialog;
+
+    if(intentobject.operation == "change") {
+      var docRef = this.database.collection('/states').doc(intentobject.op1).ref;
+      docRef.get().then((doc) => {
+        if(doc.exists == false) {
+          this.HandleUnrecognizedResponse();
+        }
+        else {
+          var stateobject: IIntentObject = doc.data();
+          var currentValue: number = parseInt(stateobject.statevalue, 10);
+          currentValue = currentValue + intentobject.value;
+          docRef.set({
+            statevalue: currentValue
+          });
+        }
+      });
+    }
+
+    if(intentobject.operation == "set") {      
+      var docRef = this.database.collection("/states").doc(intentobject.op1).set({
+        statevalue: intentobject.value
+      });      
+    }
+
+
+    this.message = this.getMessage(intentobject);
+
+    if(intentobject.autofetch == "true") {
+      this.RetrieveDialog();
+    }
+  }
+    
+  
 
   onKey(event: any) { // without type info    
     if(event.keyCode == 13)
