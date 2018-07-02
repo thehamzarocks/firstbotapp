@@ -15,4 +15,5 @@ export interface IIntentObject {
     autofetch: string;
     statename: string;
     statevalue: string;
+    nextstatename: string;
 }

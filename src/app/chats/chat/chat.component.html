@@ -6,7 +6,7 @@
 
     <button (click)="addData()">Add data</button>
     <div class="input-group">
-      <span class="input-group-addon"><i class="glyphicon glyphicon-retweet"></i></span>
+      <span class="input-group-addon" (click)="ToggleInfo()"><i class="glyphicon glyphicon-retweet"></i></span>
       <div class="wrapper">
         <input autofocus (keyup)="onKey($event)" class="form-control" [(ngModel)]='inputText' placeholder="Type here" name="firstname" type="text" />
         <!-- <div id="infoi"> Will be used later for switching chats
@@ -18,23 +18,28 @@
   </div>
 
   
-  <!-- Need to make alternate containers darker -->
-  <div id="testdiv" #scrollMe [scrollTop]="scrollMe.scrollHeight" >    
-    <!-- <div class="chatcontainer" *ngFor="let message of messages; let odd = odd; let even = even">
-      <div *ngIf="even" class="chatcontainer light">
-          <p>{{message}}</p>
-      </div>      
-      <div *ngIf="odd" class="chatcontainer dark">
-          <p>{{message}}</p>
-      </div>      
-    </div> -->
-
+  
+  <div *ngIf="!displayInfo" id="testdiv" #scrollMe [scrollTop]="scrollMe.scrollHeight" >
     <div *ngFor="let message of messages.slice().reverse(); let odd=odd; let even=even" [ngClass]="(even)?'chatcontainer':'chatcontainer darker'"> 
       <p>{{message.currentText}}</p>
       <span class="beingname">{{message.being}}</span>
     </div>
   
-  </div>   
+  </div> 
+  
+  <div *ngIf="displayInfo" id="testdiv">
+      <button id="characterButton" class="btn btn-primary btn-block" type="button">
+        <span class="characterName">Red</span>
+        <span class="characterValue">{{redRelationship}}</span>
+      </button>
+
+      <button id="characterButton" class="btn btn-primary btn-block" type="button">
+          <span class="characterName">Blue</span>
+          <span class="characterValue">{{blueRelationship}}</span>
+        </button>
+  
+      
+  </div>
 
   
   

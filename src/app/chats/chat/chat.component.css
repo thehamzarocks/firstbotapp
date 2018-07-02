@@ -60,6 +60,24 @@ html, body
     color: #888;
 }
 
+
+#characterButton {
+    margin-top: 20px;
+    font-size: 2vh;
+}
+
+.characterName {
+    float: left;
+    margin-left: 10px;    
+}
+
+.characterValue {
+    float: right;
+    margin-left: 10px;
+    margin-right: 10px;
+    
+}
+
 /* Prevent input zoom */
 input[type='text'],
 input[type='number'],

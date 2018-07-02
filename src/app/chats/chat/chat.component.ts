@@ -10,7 +10,6 @@ import { IMessageObject } from '../../messageobject';
 import { EMPTY } from 'rxjs';
 import { ChatService } from './chat.service';
 import { checkAndUpdateDirectiveDynamic } from '@angular/core/src/view/provider';
-import { stat } from 'fs';
 
 
 @Component({
@@ -32,27 +31,32 @@ export class ChatComponent implements OnInit {
 
   database;
 
+  displayInfo: boolean; //switch between chat and info
+  redRelationship: number;
+  blueRelationship: number;
+
   inputDisabled: boolean;
   badConnection: boolean; //shows notification if connection to wit is unsuccesful, pops the sent message and sets it back to the input text
 
   addData() {
     // Add a new document in collection "cities"
-    this.database.collection("dialogs").doc("20").set({
-      type: "compute node",
-      dsname: "fishing with red",
-      dialog: "asked lake choice",
-      intent: "golden lake",
+    this.database.collection("dialogs").doc("37").set({
+      type: "regular response",
+      dsname: "lake shop",
+      dialog: "set stole to yes",
+      intent: "",
       statename: "",
-      statevalue: "",
 
-      operation: "set",
-      op1: "Lake Choice",
-      value: "Golden Lake",
-      // being: "Red",
-      // response: "We could use the money, but it won't be as fun :( Let's go.",
-      nextds: "fishing with red",
-      nextdialog: "set lake choice to golden lake",
-      autofetch: "true",
+      // operation: "set",
+      // op1: "Stole From Lake Shop?",
+      // value: "yes",
+
+      being: "Blue",
+      response: "Hey! Wait! Come Back!",
+      nextds: "lake shop",
+      nextdialog: "blue yelled to stop",
+      statevalue: "",
+      autofetch: "false",
       fallback: ""
     })
     .then(function() {
@@ -73,7 +77,9 @@ export class ChatComponent implements OnInit {
       currentDialog: "welcome",
       currentIntent: "",
       currentText: "",
-      being: ""
+      currentStateValue: "",
+      being: "",
+      autofetch: "true"
     };   
     
     this.fallback = "I can't help you with that right now."
@@ -81,8 +87,17 @@ export class ChatComponent implements OnInit {
   
   ngOnInit() {    
 
+    this.displayInfo = false;
     this.inputDisabled = true;
     this.badConnection = false;
+
+    var docRef = this.database.collection("/states").doc("Red Relationship").set({
+      statevalue: 50
+    });
+    var docRef = this.database.collection("/states").doc("Blue Relationship").set({
+      statevalue: 50
+    });
+    this.UpdateCharacterInfo();
     
     this.RetrieveDialog();
   }
@@ -90,7 +105,7 @@ export class ChatComponent implements OnInit {
   //Called when the user hits enter
   CallBot() : void {
 
-    if(this.inputText == "" || this.inputDisabled == true) {
+    if(this.inputText == "" || this.inputDisabled == true || this.displayInfo == true) {
       return;
     }
     
@@ -122,12 +137,16 @@ export class ChatComponent implements OnInit {
   }
 
   private sendMessage() {
+
+    //when the user enters anything, make it into a message object and push it to the messages array
     var sentMessage: IMessageObject = {
       currentdsName: "",
       currentDialog: "",
       currentIntent: "",
+      currentStateValue: "",
       currentText: this.inputText,
       being: "You",
+      autofetch: "false"
     };
     this.messages.push(sentMessage);
   }
@@ -138,8 +157,10 @@ export class ChatComponent implements OnInit {
       currentdsName: this.message.currentdsName,
       currentDialog: this.message.currentDialog,
       currentIntent: this.message.currentIntent,
+      currentStateValue: this.message.currentStateValue,
       currentText: this.fallback,
       being: this.message.being,
+      autofetch: this.message.autofetch,
     };
     this.messages.push(receivedMessage);
     this.inputDisabled = false;
@@ -148,9 +169,10 @@ export class ChatComponent implements OnInit {
 
   //connects to firestore, gets the object, and assigns it to a message object 
   RetrieveDialog(): void {
-    console.log(this.message.currentdsName, this.message.currentDialog, this.message.currentIntent);
+    console.log(this.message.currentdsName, this.message.currentDialog, this.message.currentIntent, this.message.currentStateValue);
     var docRef = this.database.collection('/dialogs').ref;
-    var query = docRef.where("dsname", "==", this.message.currentdsName).where("dialog", "==", this.message.currentDialog).where("intent", "==", this.message.currentIntent);
+    var query = docRef.where("dsname", "==", this.message.currentdsName).where("dialog", "==", this.message.currentDialog).where("intent", "==", this.message.currentIntent)
+                                .where("statevalue", "==", this.message.currentStateValue);
     query.get().then((querySnapShot) => {
       if(querySnapShot.docs.length == 0) {
         this.HandleUnrecognizedResponse();
@@ -165,40 +187,61 @@ export class ChatComponent implements OnInit {
 
         else if(dialog.type == "compute node") {
           this.HandleComputeNode(dialog);
-        }
-
+        }       
         
-        
-        if(this.message.currentDialog == "") {
-          this.message.currentIntent = "";
-          this.RetrieveDialog();
-        }
-        else {
-          this.inputDisabled = false;
-        }
       }
       
     });
   }
 
-  private HandleRegularResponse(dialog: any) {
+  private AutoFetch() {
+    if (this.message.autofetch == "true") {
+      this.RetrieveDialog();
+    }
+    else {
+      this.inputDisabled = false;
+    }
+  }
+
+  private HandleRegularResponse(dialog: IIntentObject) {    
     var receivedMessage = this.getMessage(dialog);
-    this.messages.push(receivedMessage);
-    this.message = receivedMessage;
+    //we need the state value to select the next dialog
+    if(dialog.nextstatename != null) {
+      var docRef = this.database.collection('/states').doc(dialog.nextstatename).ref;
+      docRef.get().then((doc) => {
+        receivedMessage.currentStateValue = doc.data().statevalue;
+        this.messages.push(receivedMessage);
+        this.message = receivedMessage;
+
+        this.AutoFetch();
+      });
+    }
+    else {
+      this.messages.push(receivedMessage);
+      this.message = receivedMessage;
+
+      this.AutoFetch();
+    }
+    
   }
 
   private getMessage(dialog: IIntentObject) {
     var intentObject: IIntentObject;
     intentObject = dialog;
+
+    //we use these selectors to query for the next dialog
     var receivedMessage: IMessageObject = {
       currentdsName: intentObject.nextds,
       currentDialog: intentObject.nextdialog,
-      currentIntent: intentObject.intent,
+      currentIntent: "",
+      currentStateValue: "",
       currentText: intentObject.response,
-      being: intentObject.being,            
+      being: intentObject.being,
+      autofetch: intentObject.autofetch,
     };
+
     this.fallback = intentObject.fallback;
-    return receivedMessage;    
+    return receivedMessage;
   }
 
 
@@ -219,21 +262,39 @@ export class ChatComponent implements OnInit {
             statevalue: currentValue
           });
         }
+        
+        this.UpdateCharacterInfo();
       });
     }
 
     if(intentobject.operation == "set") {      
       var docRef = this.database.collection("/states").doc(intentobject.op1).set({
         statevalue: intentobject.value
-      });      
+      });
     }
 
+    
+    var receivedMessage = this.getMessage(intentobject);
+    this.message = receivedMessage;
+    this.AutoFetch();
+    
 
-    this.message = this.getMessage(intentobject);
+    
+  }
 
-    if(intentobject.autofetch == "true") {
-      this.RetrieveDialog();
-    }
+  UpdateCharacterInfo() {
+    var docRef = this.database.collection("/states").doc("Red Relationship").ref;
+      docRef.get().then((doc)=> {
+        this.redRelationship = doc.data().statevalue;
+      });
+      var docRef = this.database.collection("/states").doc("Blue Relationship").ref;
+      docRef.get().then((doc)=> {
+        this.blueRelationship = doc.data().statevalue;
+      });
+  }
+
+  ToggleInfo() {    
+    this.displayInfo = !this.displayInfo;
   }
     
   
