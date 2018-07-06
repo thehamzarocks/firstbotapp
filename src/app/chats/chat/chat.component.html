@@ -4,7 +4,7 @@
       <strong>Dream Fading!</strong> Weak Connection
     </div>
 
-    <button (click)="addData()">Add data</button>
+    <!-- <button (click)="addData()">Add data</button> -->
     <div class="input-group">
       <span class="input-group-addon" (click)="ToggleInfo()"><i class="glyphicon glyphicon-retweet"></i></span>
       <div class="wrapper">
@@ -27,16 +27,22 @@
   
   </div> 
   
-  <div *ngIf="displayInfo" id="testdiv">
-      <button id="characterButton" class="btn btn-primary btn-block" type="button">
+  <div *ngIf="displayInfo" id="testdiv">     
+
+      <button (click)="startDS('Red')" id="characterButton" class="btn btn-primary btn-block" type="button">
         <span class="characterName">Red</span>
         <span class="characterValue">{{redRelationship}}</span>
       </button>
 
-      <button id="characterButton" class="btn btn-primary btn-block" type="button">
+      <button (click)="startDS('Blue')" id="characterButton" class="btn btn-primary btn-block" type="button">
           <span class="characterName">Blue</span>
           <span class="characterValue">{{blueRelationship}}</span>
-        </button>
+      </button>
+
+      <button (click)="startDS('Green')" id="characterButton" class="btn btn-primary btn-block" type="button">
+        <span class="characterName">Green</span>
+        <span class="characterValue">{{blueRelationship}}</span>
+      </button>
   
       
   </div>

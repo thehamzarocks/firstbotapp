@@ -32,31 +32,33 @@ export class ChatComponent implements OnInit {
   database;
 
   displayInfo: boolean; //switch between chat and info
+  gold: number;
   redRelationship: number;
   blueRelationship: number;
+  
 
   inputDisabled: boolean;
   badConnection: boolean; //shows notification if connection to wit is unsuccesful, pops the sent message and sets it back to the input text
 
   addData() {
     // Add a new document in collection "cities"
-    this.database.collection("dialogs").doc("37").set({
-      type: "regular response",
-      dsname: "lake shop",
-      dialog: "set stole to yes",
+    this.database.collection("dialogs").doc("72").set({
+      type: "compute node",
+      dsname: "lake green",
+      dialog: "set blue open ds",
       intent: "",
       statename: "",
 
-      // operation: "set",
-      // op1: "Stole From Lake Shop?",
-      // value: "yes",
+      operation: "set",
+      op1: "Green Open DS",
+      value: "green ds",
 
-      being: "Blue",
-      response: "Hey! Wait! Come Back!",
-      nextds: "lake shop",
-      nextdialog: "blue yelled to stop",
+      being: "Engima",
+      response: "",
+      nextds: "open dialog",
+      nextdialog: "set green open ds",
       statevalue: "",
-      autofetch: "false",
+      autofetch: "true",
       fallback: ""
     })
     .then(function() {
@@ -91,12 +93,31 @@ export class ChatComponent implements OnInit {
     this.inputDisabled = true;
     this.badConnection = false;
 
+    var docRef = this.database.collection("/states").doc("Gold").set({
+      statevalue: 500
+    });
+
     var docRef = this.database.collection("/states").doc("Red Relationship").set({
       statevalue: 50
     });
     var docRef = this.database.collection("/states").doc("Blue Relationship").set({
       statevalue: 50
     });
+    var docRef = this.database.collection("/states").doc("Green Relationship").set({
+      statevalue: 50
+    });
+
+    var docRef = this.database.collection("/states").doc("Red Open DS").set({
+      statevalue: ""
+    });
+    var docRef = this.database.collection("/states").doc("Blue Open DS").set({
+      statevalue: ""
+    });
+    var docRef = this.database.collection("/states").doc("Green Open DS").set({
+      statevalue: ""
+    });
+
+    
     this.UpdateCharacterInfo();
     
     this.RetrieveDialog();
@@ -283,6 +304,10 @@ export class ChatComponent implements OnInit {
   }
 
   UpdateCharacterInfo() {
+    var docRef = this.database.collection("/states").doc("Gold").ref;
+      docRef.get().then((doc)=> {
+        this.gold = doc.data().statevalue;
+      });
     var docRef = this.database.collection("/states").doc("Red Relationship").ref;
       docRef.get().then((doc)=> {
         this.redRelationship = doc.data().statevalue;
@@ -304,6 +329,24 @@ export class ChatComponent implements OnInit {
     this.CallBot();
   }
 
+  startDS(character: String) {
+    var characterdsSelector: String = character + " Open DS"
+    console.log(characterdsSelector)
+    var docRef = this.database.collection("/states").doc(characterdsSelector).ref;
+      docRef.get().then((doc)=> {
+        if(doc.data().statevalue == "") {
+          //need to put up a notification saying can't open chat with the character right now
+          return;
+        }
+        this.message.currentdsName = doc.data().statevalue;
+        this.message.currentDialog = "";
+        this.message.currentIntent = "";
+        this.message.currentStateValue = "";
+        this.message.currentText = "";
+
+        this.RetrieveDialog();
+      });
+  }
        
 
 }
