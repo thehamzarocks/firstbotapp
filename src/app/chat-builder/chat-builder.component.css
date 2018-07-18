@@ -1,0 +1,13 @@
+html, body {
+    margin: 0;
+}
+
+#creationpanel {
+    width: 300px;
+}
+
+#movingdialog {
+    position: absolute;
+    z-index: 9;
+    text-align: center;
+}

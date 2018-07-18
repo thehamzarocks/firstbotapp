@@ -1,0 +1,92 @@
+<div id="creationpanel" class="panel panel-primary">
+  <div class="panel-heading">
+      Dialogs Here!
+  </div>
+
+  <div class="panel-body">
+      <form class="form"            
+            (ngSubmit)="save()"
+            [formGroup]="dialogForm">
+          <fieldset>
+
+              <div class="form-group">
+                  <label class="control-label" 
+                         for="dsname">Dialog Sequence Name</label>
+
+                  <div>
+                      <input class="form-control" 
+                             id="dsname" 
+                             type="text" 
+                             placeholder="Dialog Sequence Name (required)"
+                             formControlName="dsname"/>                      
+                  </div>
+              </div>
+              
+              <div class="form-group">
+                <div class="">
+                  <button class="btn btn-primary"
+                        (click)="addDialog()">
+                        Add Dialog
+                  </button>
+                </div>
+              </div>
+
+              <div ngDraggable id="movingdialog"
+              class="panel panel-primary" formArrayName="dialogs" *ngFor="let dialog of dialogs.controls; let i=index">
+                <div>{{i}}</div>
+                <div [formGroupName]="i">
+                  <div class="form-group">
+                      <label class="control-label" 
+                            attr.for="{{'response' + i}}">Response</label>
+
+                      <div class="">
+                          <input class="form-control" 
+                                id="{{'response' + i}}"
+                                type="text" 
+                                placeholder="Response (required)"
+                                formControlName="response"/>
+                      </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="control-label" 
+                          for="{{'intent' + i}}">Intent</label>
+
+                    <div class="">
+                        <input class="form-control" 
+                              id="{{'intent' + i}}"
+                              type="number" 
+                              placeholder="Intent (required)"
+                              formControlName="intent"/>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                  <div class="">
+                      <span>
+                          <button class="btn btn-primary"
+                                  type="submit"
+                                  [disabled]="!dialogForm.valid">
+                              Save
+                          </button>
+                      </span>
+                      <span>
+                          <button class="btn btn-default"
+                                  type="button"
+                                  (click)="populateTestData()">
+                              Populate Test Data
+                          </button>
+                      </span>
+                  </div>
+              </div>
+          </fieldset>
+      </form>
+  </div>
+</div>
+<br>Dialog 1: {{dialogs.get('0.response')?.value}}
+<br>Dirty: {{ dialogForm.dirty }} 
+<br>Touched: {{ dialogForm.touched }}
+<br>Valid: {{ dialogForm.valid }}
+<br>Value: {{ dialogForm.value | json }}
