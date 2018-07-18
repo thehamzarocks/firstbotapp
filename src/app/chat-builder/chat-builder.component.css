@@ -8,6 +8,7 @@ html, body {
 
 #movingdialog {
     position: absolute;
+    width: 300px;
     z-index: 9;
     text-align: center;
 }

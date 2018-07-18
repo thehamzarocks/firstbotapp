@@ -23,7 +23,7 @@
               </div>
               
               <div class="form-group">
-                <div class="">
+                <div>
                   <button class="btn btn-primary"
                         (click)="addRegularDialog()">
                         Add Regular Dialog
@@ -32,7 +32,7 @@
               </div>
 
               <div class="form-group">
-                <div class="">
+                <div>
                   <button class="btn btn-primary"
                         (click)="addRegularDialog()">
                         Add Compute Node
@@ -46,10 +46,7 @@
                 <div [formGroupName]="i">
 
                     <div class="form-group">
-                      <label class="control-label" 
-                            attr.for="{{'being' + i}}">Being</label>
-
-                      <div class="">
+                      <div>
                           <input class="form-control" 
                                 id="{{'being' + i}}"
                                 type="text" 
@@ -59,10 +56,7 @@
                   </div>
 
                   <div class="form-group">
-                      <label class="control-label" 
-                            attr.for="{{'response' + i}}">Response</label>
-
-                      <div class="">
+                      <div>
                           <input class="form-control" 
                                 id="{{'response' + i}}"
                                 type="text" 
@@ -72,10 +66,7 @@
                   </div>
 
                   <div class="form-group">
-                        <label class="control-label" 
-                              attr.for="{{'fallback' + i}}">Fallback</label>
-  
-                        <div class="">
+                        <div>
                             <input class="form-control" 
                                   id="{{'fallback' + i}}"
                                   type="text" 
@@ -83,12 +74,53 @@
                                   formControlName="fallback"/>
                         </div>
                     </div>
+
+                  <div class="form-group">
+                    <div>
+                      <button class="btn btn-primary"
+                      (click)="addSelector(i)">
+                        Add Selector
+                    </button>
+                    </div>
+                  </div>                  
+
+                  <div
+                  class="panel panel-primary" formArrayName="selectors" *ngFor="let selector of dialog.controls.selectors.controls; let j=index">
+                    <div [formGroupName]="j">
+                      <div class="form-group">
+                        <div>
+                          <span>
+                            <input class="form-control"
+                            id="{{'statevalue' + i + '(' + j + ')'}}"
+                            type="text"
+                            placeholder="statevalue"
+                            formControlName="statevalue"/>
+                          </span>
+                          <span>
+                              <input class="form-control"
+                              id="{{'intent' + i + '(' + j + ')'}}"
+                              type="text"
+                              placeholder="intent"
+                              formControlName="intent"/>
+                          </span>
+                          <span>
+                              <input class="form-control"
+                              id="{{'nextid' + i + '(' + j + ')'}}"
+                              type="number"
+                              placeholder="next id"
+                              formControlName="nextid"/>
+                          </span>
+                            
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                   
                 </div>
               </div>
 
               <div class="form-group">
-                  <div class="">
+                  <div>
                       <span>
                           <button class="btn btn-primary"
                                   type="submit"

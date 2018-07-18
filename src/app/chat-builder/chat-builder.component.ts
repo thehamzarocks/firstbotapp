@@ -22,8 +22,13 @@ export class ChatBuilderComponent implements OnInit {
 
   constructor(private fb: FormBuilder) { }
 
-  addSelector(): void {
-    this.selectors.push(this.buildSelectors());
+  addSelector(dialogindex: number): void {
+    // console.log(dialogindex.toString());
+    // console.log(this.regularDialogs.get('0.selectors').value);
+    // this.regularDialogs.get(dialogindex.toString() + '.selectors').value.push(this.buildSelectors());
+
+    const control = (<FormArray>this.dialogForm.controls['regularDialogs']).at(dialogindex).get('selectors') as FormArray;
+    control.push(this.buildSelectors());
   }
 
   buildSelectors(): FormGroup {
@@ -43,7 +48,7 @@ export class ChatBuilderComponent implements OnInit {
       being: '',
       response: '',
       fallback: '',
-      selectors: this.fb.array([this.buildSelectors()]),
+      selectors: this.fb.array([this.buildSelectors()]),      
     });
   }
 
