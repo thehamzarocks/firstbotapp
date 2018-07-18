@@ -12,20 +12,38 @@ export class ChatBuilderComponent implements OnInit {
   dialogForm: FormGroup;
   dialog: Dialog = new Dialog();
 
-  get dialogs(): FormArray{
-    return <FormArray>this.dialogForm.get('dialogs');
+  get regularDialogs(): FormArray{
+    return <FormArray>this.dialogForm.get('regularDialogs');
+  }
+
+  get selectors(): FormArray{
+    return <FormArray>this.dialogForm.get('selectors');
   }
 
   constructor(private fb: FormBuilder) { }
 
-  addDialog(): void {
-    this.dialogs.push(this.buildDialogs());
+  addSelector(): void {
+    this.selectors.push(this.buildSelectors());
   }
 
-  buildDialogs(): FormGroup {
+  buildSelectors(): FormGroup {
     return this.fb.group({
+      statevalue: '',
+      intent: '',
+      nextid: 0
+    });
+  }
+
+  addRegularDialog(): void {
+    this.regularDialogs.push(this.buildRegularDialogs());
+  }
+
+  buildRegularDialogs(): FormGroup {
+    return this.fb.group({
+      being: '',
       response: '',
-        intent: 0
+      fallback: '',
+      selectors: this.fb.array([this.buildSelectors()]),
     });
   }
 
@@ -34,7 +52,8 @@ export class ChatBuilderComponent implements OnInit {
   ngOnInit() {
     this.dialogForm = this.fb.group({
       dsname: '',
-      dialogs: this.fb.array([this.buildDialogs()]),
+      regularDialogs: this.fb.array([this.buildRegularDialogs()]),
+
     });
   }
 }

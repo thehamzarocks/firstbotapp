@@ -42,23 +42,23 @@ export class ChatComponent implements OnInit {
 
   addData() {
     // Add a new document in collection "cities"
-    this.database.collection("dialogs").doc("72").set({
-      type: "compute node",
-      dsname: "lake green",
-      dialog: "set blue open ds",
-      intent: "",
+    this.database.collection("dialogs").doc("76").set({
+      type: "regular response",
+      dsname: "red ds",
+      dialog: "red asked what to do about green",
+      intent: "catch",
       statename: "",
 
-      operation: "set",
-      op1: "Green Open DS",
-      value: "green ds",
+      // operation: "set",
+      // op1: "Green Open DS",
+      // value: "green ds",
 
-      being: "Engima",
+      being: "Red",
       response: "",
-      nextds: "open dialog",
-      nextdialog: "set green open ds",
+      nextds: "",
+      nextdialog: "",
       statevalue: "",
-      autofetch: "true",
+      autofetch: "false",
       fallback: ""
     })
     .then(function() {

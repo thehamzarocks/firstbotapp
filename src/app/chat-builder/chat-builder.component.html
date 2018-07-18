@@ -25,16 +25,39 @@
               <div class="form-group">
                 <div class="">
                   <button class="btn btn-primary"
-                        (click)="addDialog()">
-                        Add Dialog
+                        (click)="addRegularDialog()">
+                        Add Regular Dialog
+                  </button>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <div class="">
+                  <button class="btn btn-primary"
+                        (click)="addRegularDialog()">
+                        Add Compute Node
                   </button>
                 </div>
               </div>
 
               <div ngDraggable id="movingdialog"
-              class="panel panel-primary" formArrayName="dialogs" *ngFor="let dialog of dialogs.controls; let i=index">
+              class="panel panel-primary" formArrayName="regularDialogs" *ngFor="let dialog of regularDialogs.controls; let i=index">
                 <div>{{i}}</div>
                 <div [formGroupName]="i">
+
+                    <div class="form-group">
+                      <label class="control-label" 
+                            attr.for="{{'being' + i}}">Being</label>
+
+                      <div class="">
+                          <input class="form-control" 
+                                id="{{'being' + i}}"
+                                type="text" 
+                                placeholder="Being (required)"
+                                formControlName="being"/>
+                      </div>
+                  </div>
+
                   <div class="form-group">
                       <label class="control-label" 
                             attr.for="{{'response' + i}}">Response</label>
@@ -49,17 +72,18 @@
                   </div>
 
                   <div class="form-group">
-                    <label class="control-label" 
-                          for="{{'intent' + i}}">Intent</label>
-
-                    <div class="">
-                        <input class="form-control" 
-                              id="{{'intent' + i}}"
-                              type="number" 
-                              placeholder="Intent (required)"
-                              formControlName="intent"/>
+                        <label class="control-label" 
+                              attr.for="{{'fallback' + i}}">Fallback</label>
+  
+                        <div class="">
+                            <input class="form-control" 
+                                  id="{{'fallback' + i}}"
+                                  type="text" 
+                                  placeholder="Fallback (required)"
+                                  formControlName="fallback"/>
+                        </div>
                     </div>
-                  </div>
+                  
                 </div>
               </div>
 
@@ -85,7 +109,7 @@
       </form>
   </div>
 </div>
-<br>Dialog 1: {{dialogs.get('0.response')?.value}}
+<br>Dialog 1: {{regularDialogs.get('0.response')?.value}}
 <br>Dirty: {{ dialogForm.dirty }} 
 <br>Touched: {{ dialogForm.touched }}
 <br>Valid: {{ dialogForm.valid }}
