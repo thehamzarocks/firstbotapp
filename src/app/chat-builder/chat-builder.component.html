@@ -39,81 +39,147 @@
                 </div>
               </div>
 
+              <div class="form-group">
+                <div>
+                  <button class="btn btn-primary"
+                        (click)="addDialog('en')">
+                        Add End Node
+                  </button>
+                </div>
+              </div>
+
               <div ngDraggable id="movingdialog"
               class="panel panel-primary" formArrayName="dialogs" *ngFor="let dialog of dialogs.controls; let i=index">
                 <div>{{i + '(' + dialog.controls.type.value + ')'}}</div>
                 <div [formGroupName]="i">
 
-                    <div class="form-group">
-                      <div>
-                          <input class="form-control" 
-                                id="{{'being' + i}}"
-                                type="text" 
-                                placeholder="Being/Operation"
-                                formControlName="being"/>   
-                      </div>
-                  </div>
-
-                  <div class="form-group">
-                      <div>
-                          <input class="form-control" 
-                                id="{{'response' + i}}"
-                                type="text" 
-                                placeholder="Response/op1"
-                                formControlName="response"/>
-                      </div>
-                  </div>
-
-                  <div class="form-group">
+                    <div *ngIf="dialog.controls.type.value=='rr'">
+                        <div class="form-group">
                         <div>
                             <input class="form-control" 
-                                  id="{{'fallback' + i}}"
-                                  type="text" 
-                                  placeholder="Fallback/op2"
-                                  formControlName="fallback"/>
+                                    id="{{'being' + i}}"
+                                    type="text" 
+                                    placeholder="Being/Operation/nextds"
+                                    formControlName="being"/>   
                         </div>
                     </div>
 
-                  <div class="form-group">
-                    <div>
-                      <button class="btn btn-primary"
-                      (click)="addDialogSelector(i)">
-                        Add Selector
-                    </button>
-                    </div>
-                  </div>                  
-
-                  <div
-                  class="panel panel-primary" formArrayName="selectors" *ngFor="let selector of dialog.controls.selectors.controls; let j=index">
-                    <div [formGroupName]="j">
-                      <div class="form-group">
+                    <div class="form-group">
                         <div>
-                          <span>
-                            <input class="form-control"
-                            id="{{'statevalue' + i + '(' + j + ')'}}"
-                            type="text"
-                            placeholder="statevalue"
-                            formControlName="statevalue"/>
-                          </span>
-                          <span>
-                              <input class="form-control"
-                              id="{{'intent' + i + '(' + j + ')'}}"
-                              type="text"
-                              placeholder="intent"
-                              formControlName="intent"/>
-                          </span>
-                          <span>
-                              <input class="form-control"
-                              id="{{'nextid' + i + '(' + j + ')'}}"
-                              type="number"
-                              placeholder="next id"
-                              formControlName="nextid"/>
-                          </span>
-                            
+                            <input class="form-control" 
+                                    id="{{'response' + i}}"
+                                    type="text" 
+                                    placeholder="Response/op1"
+                                    formControlName="response"/>
                         </div>
-                      </div>
                     </div>
-                  </div>
+
+                    <div class="form-group">
+                            <div>
+                                <input class="form-control" 
+                                    id="{{'fallback' + i}}"
+                                    type="text" 
+                                    placeholder="Fallback/op2"
+                                    formControlName="fallback"/>
+                            </div>
+                        </div>
+                </div>
+
+                <div *ngIf="dialog.controls.type.value=='cn'">
+                        <div class="form-group">
+                        <div>
+                            <input class="form-control" 
+                                    id="{{'operation' + i}}"
+                                    type="text" 
+                                    placeholder="Operation"
+                                    formControlName="operation"/>   
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div>
+                            <input class="form-control" 
+                                    id="{{'op1' + i}}"
+                                    type="text" 
+                                    placeholder="op1"
+                                    formControlName="op1"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                            <div>
+                                <input class="form-control" 
+                                    id="{{'op2' + i}}"
+                                    type="text" 
+                                    placeholder="op2"
+                                    formControlName="op2"/>
+                            </div>
+                        </div>
+                </div>
+
+                <div *ngIf="dialog.controls.type.value=='en'">
+                    <div class="form-group">
+                        <div>
+                            <input class="form-control" 
+                            id="{{'nextds' + i}}"
+                            type="text" 
+                            placeholder="next ds"
+                            formControlName="nextds"/>
+                        </div>
+                    </div>
+                </div>
+
+                <div *ngIf="dialog.controls.type.value!='en'">
+
+                    <div class="form-group">
+                        <div>
+                        <button class="btn btn-primary"
+                        (click)="addDialogSelector(i)">
+                            Add Selector
+                        </button>
+                        </div>
+                    </div>                  
+
+                  
+                    <div 
+                    class="panel panel-primary" formArrayName="selectors" *ngFor="let selector of dialog.controls.selectors.controls; let j=index">
+                        <div [formGroupName]="j">
+                        <div class="form-group">
+                            <div>
+                            <span>
+                                    <input class="form-control"
+                                    id="{{'statename' + i + '(' + j + ')'}}"
+                                    type="text"
+                                    placeholder="statename"
+                                    formControlName="statename"/>
+                            </span>
+                            <span>
+                                <input class="form-control"
+                                id="{{'statevalue' + i + '(' + j + ')'}}"
+                                type="text"
+                                placeholder="statevalue"
+                                formControlName="statevalue"/>
+                            </span>
+                            <span>
+                                <input class="form-control"
+                                id="{{'intent' + i + '(' + j + ')'}}"
+                                type="text"
+                                placeholder="intent"
+                                formControlName="intent"/>
+                            </span>
+                            <span>
+                                <input class="form-control"
+                                id="{{'nextid' + i + '(' + j + ')'}}"
+                                type="number"
+                                placeholder="next id"
+                                formControlName="nextid"/>
+                            </span>
+                                
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                </div>
                   
                 </div>
               </div>

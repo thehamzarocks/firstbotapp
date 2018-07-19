@@ -11,6 +11,7 @@ import { AngularFireModule } from 'angularfire2';
 import { ChatComponent } from './chats/chat/chat.component';
 import { environment } from '../environments/environment';
 import { ChatBuilderComponent } from './chat-builder/chat-builder.component';
+import { DialogAdder } from './chat-builder/dialog-adder';
 
 
 
@@ -30,7 +31,8 @@ import { ChatBuilderComponent } from './chat-builder/chat-builder.component';
     
   ],
   providers: [
-    FormBuilder
+    FormBuilder,
+    DialogAdder
   ],
   bootstrap: [ChatBuilderComponent]
 })

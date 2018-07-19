@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
 import { Dialog } from './Dialog';
+import { AngularFirestore } from 'angularfire2/firestore';
+import { DialogAdder } from './dialog-adder';
 
 @Component({
   selector: 'app-chat-builder',
@@ -20,7 +22,33 @@ export class ChatBuilderComponent implements OnInit {
     return <FormArray>this.dialogForm.get('selectors');
   }
 
-  constructor(private fb: FormBuilder) { }
+  constructor(private fb: FormBuilder, private db:AngularFirestore, private da:DialogAdder) { }
+
+  // addObject() {
+  //   var dialog = {
+  //     id: 9,
+  //     dsname: 'entry',
+  //     response: 'hello!',
+  //     selectors: [
+  //       {
+  //         statename: '',
+  //         statevalue: '',
+  //         intent: 'yes',
+  //         mappedid: 1
+  //       },
+  //       {
+  //         statename: '',
+  //         statevalue: '',
+  //         intent: 'no',
+  //         mappedid: 2
+  //       }
+  //     ],
+  //     autofetch: false,
+  //   }
+
+  //   this.db.collection('dialogsequences').add(dialog);      
+
+  // }
 
   addDialogSelector(dialogindex: number): void {
     // console.log(dialogindex.toString());
@@ -33,6 +61,7 @@ export class ChatBuilderComponent implements OnInit {
 
   buildSelectors(): FormGroup {
     return this.fb.group({
+      statename: '',
       statevalue: '',
       intent: '',
       nextid: 0
@@ -53,16 +82,17 @@ export class ChatBuilderComponent implements OnInit {
       operation: '',
       op1: '',
       op2: '',
+      nextds: '',
       selectors: this.fb.array([this.buildSelectors()]),      
     });
   }
 
 
   save() {
-    console.log(this.dialogForm.value);
+    this.da.AddDialogs(this.dialogForm.value);
   }
 
-  ngOnInit() {
+  ngOnInit() {    
     this.dialogForm = this.fb.group({
       dsname: '',
       dialogs: this.fb.array([]),      
