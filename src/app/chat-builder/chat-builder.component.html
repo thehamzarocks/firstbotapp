@@ -15,8 +15,8 @@
 
                   <div>
                       <input class="form-control" 
-                             id="dsname" 
-                             type="text" 
+                             id="dsname"
+                             type="text"
                              placeholder="Dialog Sequence Name (required)"
                              formControlName="dsname"/>                      
                   </div>
@@ -25,7 +25,7 @@
               <div class="form-group">
                 <div>
                   <button class="btn btn-primary"
-                        (click)="addRegularDialog()">
+                        (click)="addDialog('rr')">
                         Add Regular Dialog
                   </button>
                 </div>
@@ -34,15 +34,15 @@
               <div class="form-group">
                 <div>
                   <button class="btn btn-primary"
-                        (click)="addRegularDialog()">
+                        (click)="addDialog('cn')">
                         Add Compute Node
                   </button>
                 </div>
               </div>
 
               <div ngDraggable id="movingdialog"
-              class="panel panel-primary" formArrayName="regularDialogs" *ngFor="let dialog of regularDialogs.controls; let i=index">
-                <div>{{i}}</div>
+              class="panel panel-primary" formArrayName="dialogs" *ngFor="let dialog of dialogs.controls; let i=index">
+                <div>{{i + '(' + dialog.controls.type.value + ')'}}</div>
                 <div [formGroupName]="i">
 
                     <div class="form-group">
@@ -50,8 +50,8 @@
                           <input class="form-control" 
                                 id="{{'being' + i}}"
                                 type="text" 
-                                placeholder="Being (required)"
-                                formControlName="being"/>
+                                placeholder="Being/Operation"
+                                formControlName="being"/>   
                       </div>
                   </div>
 
@@ -60,7 +60,7 @@
                           <input class="form-control" 
                                 id="{{'response' + i}}"
                                 type="text" 
-                                placeholder="Response (required)"
+                                placeholder="Response/op1"
                                 formControlName="response"/>
                       </div>
                   </div>
@@ -70,7 +70,7 @@
                             <input class="form-control" 
                                   id="{{'fallback' + i}}"
                                   type="text" 
-                                  placeholder="Fallback (required)"
+                                  placeholder="Fallback/op2"
                                   formControlName="fallback"/>
                         </div>
                     </div>
@@ -78,7 +78,7 @@
                   <div class="form-group">
                     <div>
                       <button class="btn btn-primary"
-                      (click)="addSelector(i)">
+                      (click)="addDialogSelector(i)">
                         Add Selector
                     </button>
                     </div>
@@ -141,7 +141,7 @@
       </form>
   </div>
 </div>
-<br>Dialog 1: {{regularDialogs.get('0.response')?.value}}
+<br>Dialog 1: {{dialogs.get('0.response')?.value}}
 <br>Dirty: {{ dialogForm.dirty }} 
 <br>Touched: {{ dialogForm.touched }}
 <br>Valid: {{ dialogForm.valid }}

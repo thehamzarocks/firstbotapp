@@ -12,8 +12,8 @@ export class ChatBuilderComponent implements OnInit {
   dialogForm: FormGroup;
   dialog: Dialog = new Dialog();
 
-  get regularDialogs(): FormArray{
-    return <FormArray>this.dialogForm.get('regularDialogs');
+  get dialogs(): FormArray{
+    return <FormArray>this.dialogForm.get('dialogs');
   }
 
   get selectors(): FormArray{
@@ -22,12 +22,12 @@ export class ChatBuilderComponent implements OnInit {
 
   constructor(private fb: FormBuilder) { }
 
-  addSelector(dialogindex: number): void {
+  addDialogSelector(dialogindex: number): void {
     // console.log(dialogindex.toString());
     // console.log(this.regularDialogs.get('0.selectors').value);
     // this.regularDialogs.get(dialogindex.toString() + '.selectors').value.push(this.buildSelectors());
 
-    const control = (<FormArray>this.dialogForm.controls['regularDialogs']).at(dialogindex).get('selectors') as FormArray;
+    const control = (<FormArray>this.dialogForm.controls['dialogs']).at(dialogindex).get('selectors') as FormArray;
     control.push(this.buildSelectors());
   }
 
@@ -38,27 +38,29 @@ export class ChatBuilderComponent implements OnInit {
       nextid: 0
     });
   }
+  
 
-  addRegularDialog(): void {
-    this.regularDialogs.push(this.buildRegularDialogs());
+  addDialog(dialogType:string): void {
+    this.dialogs.push(this.buildDialogs(dialogType));
   }
 
-  buildRegularDialogs(): FormGroup {
+  buildDialogs(dialogType: string): FormGroup {
     return this.fb.group({
+      type: dialogType,
       being: '',
       response: '',
       fallback: '',
+      operation: '',
+      op1: '',
+      op2: '',
       selectors: this.fb.array([this.buildSelectors()]),      
     });
   }
 
-
-
   ngOnInit() {
     this.dialogForm = this.fb.group({
       dsname: '',
-      regularDialogs: this.fb.array([this.buildRegularDialogs()]),
-
+      dialogs: this.fb.array([]),      
     });
   }
 }
