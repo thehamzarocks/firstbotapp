@@ -57,6 +57,11 @@ export class ChatBuilderComponent implements OnInit {
     });
   }
 
+
+  save() {
+    console.log(this.dialogForm.value);
+  }
+
   ngOnInit() {
     this.dialogForm = this.fb.group({
       dsname: '',

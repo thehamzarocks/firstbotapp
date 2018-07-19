@@ -4,8 +4,7 @@
   </div>
 
   <div class="panel-body">
-      <form class="form"            
-            (ngSubmit)="save()"
+      <form class="form"                        
             [formGroup]="dialogForm">
           <fieldset>
 
@@ -123,7 +122,7 @@
                   <div>
                       <span>
                           <button class="btn btn-primary"
-                                  type="submit"
+                                  (click)="save()"
                                   [disabled]="!dialogForm.valid">
                               Save
                           </button>
