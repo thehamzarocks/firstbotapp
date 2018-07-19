@@ -10,7 +10,7 @@ import { IMessageObject } from '../../messageobject';
 import { EMPTY } from 'rxjs';
 import { ChatService } from './chat.service';
 import { checkAndUpdateDirectiveDynamic } from '@angular/core/src/view/provider';
-import { ISelectorObject } from '../../selectorobject';
+import { ISelectorObject } from 'src/app/selectorobject';
 
 
 @Component({
@@ -75,12 +75,6 @@ export class ChatComponent implements OnInit {
     this.database = db;
 
     this.messages = new Array<IMessageObject>();
-    this.selectors = [{
-      statename: '',
-      statevalue: '',
-      intent: '',
-      nextid: 0,
-    }];
 
     this.message = <IMessageObject>{
       currentdsName: "initialize",
@@ -101,32 +95,32 @@ export class ChatComponent implements OnInit {
     this.inputDisabled = true;
     this.badConnection = false;
 
-    // var docRef = this.database.collection("/states").doc("Gold").set({
-    //   statevalue: 500
-    // });
+    var docRef = this.database.collection("/states").doc("Gold").set({
+      statevalue: 500
+    });
 
-    // var docRef = this.database.collection("/states").doc("Red Relationship").set({
-    //   statevalue: 50
-    // });
-    // var docRef = this.database.collection("/states").doc("Blue Relationship").set({
-    //   statevalue: 50
-    // });
-    // var docRef = this.database.collection("/states").doc("Green Relationship").set({
-    //   statevalue: 50
-    // });
+    var docRef = this.database.collection("/states").doc("Red Relationship").set({
+      statevalue: 50
+    });
+    var docRef = this.database.collection("/states").doc("Blue Relationship").set({
+      statevalue: 50
+    });
+    var docRef = this.database.collection("/states").doc("Green Relationship").set({
+      statevalue: 50
+    });
 
-    // var docRef = this.database.collection("/states").doc("Red Open DS").set({
-    //   statevalue: ""
-    // });
-    // var docRef = this.database.collection("/states").doc("Blue Open DS").set({
-    //   statevalue: ""
-    // });
-    // var docRef = this.database.collection("/states").doc("Green Open DS").set({
-    //   statevalue: ""
-    // });
+    var docRef = this.database.collection("/states").doc("Red Open DS").set({
+      statevalue: ""
+    });
+    var docRef = this.database.collection("/states").doc("Blue Open DS").set({
+      statevalue: ""
+    });
+    var docRef = this.database.collection("/states").doc("Green Open DS").set({
+      statevalue: ""
+    });
 
     
-    // this.UpdateCharacterInfo();
+    this.UpdateCharacterInfo();
     
     this.RetrieveDialog();
   }
@@ -198,10 +192,10 @@ export class ChatComponent implements OnInit {
 
   //connects to firestore, gets the object, and assigns it to a message object 
   RetrieveDialog(): void {
-    var id: number = this.GetId();
     console.log(this.message.currentdsName, this.message.currentDialog, this.message.currentIntent, this.message.currentStateValue);
-    var docRef = this.database.collection('/dialogsequences').ref;
-    var query = docRef.where("dsname", "==", this.message.currentdsName).where("id", "==", id);
+    var docRef = this.database.collection('/dialogs').ref;
+    var query = docRef.where("dsname", "==", this.message.currentdsName).where("dialog", "==", this.message.currentDialog).where("intent", "==", this.message.currentIntent)
+                                .where("statevalue", "==", this.message.currentStateValue);
     query.get().then((querySnapShot) => {
       if(querySnapShot.docs.length == 0) {
         this.HandleUnrecognizedResponse();
@@ -210,11 +204,11 @@ export class ChatComponent implements OnInit {
       else {
         var doc = querySnapShot.docs[0];
         var dialog: IIntentObject = doc.data();
-        if(dialog.type == "rr") {
-          this.HandleRegularResponse(dialog);
+        if(dialog.type == "regular response") {
+          this.HandleRegularResponse(dialog);  
         }
 
-        else if(dialog.type == "cn") {
+        else if(dialog.type == "compute node") {
           this.HandleComputeNode(dialog);
         }       
         
@@ -266,10 +260,9 @@ export class ChatComponent implements OnInit {
       currentStateValue: "",
       currentText: intentObject.response,
       being: intentObject.being,
-      autofetch: intentObject.autofetch,            
+      autofetch: intentObject.autofetch,
     };
 
-    this.selectors = intentObject.selectors;
     this.fallback = intentObject.fallback;
     return receivedMessage;
   }
@@ -287,7 +280,7 @@ export class ChatComponent implements OnInit {
         else {
           var stateobject: IIntentObject = doc.data();
           var currentValue: number = parseInt(stateobject.statevalue, 10);
-          //currentValue = currentValue + intentobject.op2;
+          currentValue = currentValue + intentobject.value;
           docRef.set({
             statevalue: currentValue
           });
@@ -299,7 +292,7 @@ export class ChatComponent implements OnInit {
 
     if(intentobject.operation == "set") {      
       var docRef = this.database.collection("/states").doc(intentobject.op1).set({
-        statevalue: intentobject.op2
+        statevalue: intentobject.value
       });
     }
 
@@ -355,16 +348,6 @@ export class ChatComponent implements OnInit {
 
         this.RetrieveDialog();
       });
-  }
-
-  //TODO: handle state selectors too
-  GetId(): number {
-    for(var i=0; i<this.selectors.length; i++) {
-      var selector: ISelectorObject = this.selectors[i];
-      if(selector.intent == this.message.currentIntent) {
-        return selector.nextid;
-      }
-    }
   }
        
 

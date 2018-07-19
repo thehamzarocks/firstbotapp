@@ -1,3 +1,5 @@
+import { ISelectorObject } from "./selectorobject";
+
 export interface IMessageObject {
     currentdsName: string;
     currentDialog: string;
@@ -5,5 +7,5 @@ export interface IMessageObject {
     currentStateValue: string;
     currentText: string;
     autofetch: string;
-    being: string;    
+    being: string;        
 }

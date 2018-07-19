@@ -1,3 +1,5 @@
+import { ISelectorObject } from "./selectorobject";
+
 export interface IIntentObject {
     _id: string;
     type: string;
@@ -11,9 +13,10 @@ export interface IIntentObject {
     fallback: string;
     operation: string;
     op1: string;
-    value: number;
+    op2: string;
     autofetch: string;
     statename: string;
     statevalue: string;
     nextstatename: string;
+    selectors: ISelectorObject[];
 }

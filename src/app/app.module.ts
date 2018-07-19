@@ -34,6 +34,6 @@ import { DialogAdder } from './chat-builder/dialog-adder';
     FormBuilder,
     DialogAdder
   ],
-  bootstrap: [ChatBuilderComponent]
+  bootstrap: [ChatComponent]
 })
 export class AppModule { }
