@@ -83,8 +83,8 @@ export class ChatComponent implements OnInit {
     }];
 
     this.message = <IMessageObject>{
-      currentdsName: "initialize",
-      currentDialog: "welcome",
+      currentdsName: "the beginning",
+      currentDialog: "",
       currentIntent: "",
       currentText: "",
       currentStateValue: "",
@@ -199,7 +199,8 @@ export class ChatComponent implements OnInit {
   //connects to firestore, gets the object, and assigns it to a message object 
   RetrieveDialog(): void {
     var id: number = this.GetId();
-    console.log(this.message.currentdsName, this.message.currentDialog, this.message.currentIntent, this.message.currentStateValue);
+    console.log(id);
+    console.log(this.message.currentdsName, this.message.currentIntent);
     var docRef = this.database.collection('/dialogsequences').ref;
     var query = docRef.where("dsname", "==", this.message.currentdsName).where("id", "==", id);
     query.get().then((querySnapShot) => {
@@ -208,13 +209,14 @@ export class ChatComponent implements OnInit {
       }
        
       else {
-        var doc = querySnapShot.docs[0];
-        var dialog: IIntentObject = doc.data();
+        var doc = querySnapShot.docs[0];        
+        var dialog: IIntentObject = doc.data();        
         if(dialog.type == "rr") {
           this.HandleRegularResponse(dialog);
         }
 
         else if(dialog.type == "cn") {
+          console.log("handling compute node");
           this.HandleComputeNode(dialog);
         }       
         
@@ -224,6 +226,7 @@ export class ChatComponent implements OnInit {
   }
 
   private AutoFetch() {
+    console.log(this.message.autofetch);
     if (this.message.autofetch == "true") {
       this.RetrieveDialog();
     }
@@ -255,6 +258,7 @@ export class ChatComponent implements OnInit {
   }
 
   private getMessage(dialog: IIntentObject) {
+    console.log("getting message");
     var intentObject: IIntentObject;
     intentObject = dialog;
 
@@ -268,8 +272,10 @@ export class ChatComponent implements OnInit {
       being: intentObject.being,
       autofetch: intentObject.autofetch,            
     };
+    console.log(receivedMessage);
 
     this.selectors = intentObject.selectors;
+    console.log(this.selectors);
     this.fallback = intentObject.fallback;
     return receivedMessage;
   }
@@ -297,7 +303,8 @@ export class ChatComponent implements OnInit {
       });
     }
 
-    if(intentobject.operation == "set") {      
+    if(intentobject.operation == "set") {
+      console.log("setting");  
       var docRef = this.database.collection("/states").doc(intentobject.op1).set({
         statevalue: intentobject.op2
       });
@@ -359,6 +366,7 @@ export class ChatComponent implements OnInit {
 
   //TODO: handle state selectors too
   GetId(): number {
+    console.log("getting id");
     for(var i=0; i<this.selectors.length; i++) {
       var selector: ISelectorObject = this.selectors[i];
       if(selector.intent == this.message.currentIntent) {
