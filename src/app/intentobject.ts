@@ -14,7 +14,7 @@ export interface IIntentObject {
     operation: string;
     op1: string;
     op2: string;
-    autofetch: string;
+    autofetch: boolean;
     statename: string;
     statevalue: string;
     nextstatename: string;

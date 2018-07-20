@@ -83,13 +83,13 @@ export class ChatComponent implements OnInit {
     }];
 
     this.message = <IMessageObject>{
-      currentdsName: "the beginning",
+      currentdsName: "hotel",
       currentDialog: "",
       currentIntent: "",
       currentText: "",
       currentStateValue: "",
       being: "",
-      autofetch: "true"
+      autofetch: true,
     };   
     
     this.fallback = "I can't help you with that right now."
@@ -175,7 +175,7 @@ export class ChatComponent implements OnInit {
       currentStateValue: "",
       currentText: this.inputText,
       being: "You",
-      autofetch: "false"
+      autofetch: false,
     };
     this.messages.push(sentMessage);
   }
@@ -227,7 +227,7 @@ export class ChatComponent implements OnInit {
 
   private AutoFetch() {
     console.log(this.message.autofetch);
-    if (this.message.autofetch == "true") {
+    if (this.message.autofetch == true) {
       this.RetrieveDialog();
     }
     else {
@@ -369,9 +369,37 @@ export class ChatComponent implements OnInit {
     console.log("getting id");
     for(var i=0; i<this.selectors.length; i++) {
       var selector: ISelectorObject = this.selectors[i];
-      if(selector.intent == this.message.currentIntent) {
+      if(selector.intent != '') {
+        if(selector.intent == this.message.currentIntent) {
+          if(selector.statename != '') {
+            var docRef = this.database.collection("/states").doc(selector.statename).ref;
+            docRef.get().then((doc)=> {
+              var statevalue = doc.data().statevalue;
+              if(statevalue == selector.statevalue) {
+                return selector.nextid;
+              }
+            });
+          }
+          else if(selector.statename == ''){
+            return selector.nextid;
+          }
+        }
+    }
+    else if(selector.intent == '') {
+      if(selector.statename != '') {
+        var docRef = this.database.collection("/states").doc(selector.statename).ref;
+        docRef.get().then((doc)=> {
+          var statevalue = doc.data().statevalue;
+          console.log("state value is ", statevalue);
+          if(statevalue == selector.statevalue) {
+            return selector.nextid;
+          }
+        });
+      }
+      else if(selector.statename == ''){
         return selector.nextid;
       }
+    }
     }
   }
        

@@ -6,6 +6,6 @@ export interface IMessageObject {
     currentIntent: string;
     currentStateValue: string;
     currentText: string;
-    autofetch: string;
+    autofetch: boolean;
     being: string;        
 }
