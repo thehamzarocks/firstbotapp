@@ -9,17 +9,17 @@ html, body
 
 #mainheading{
     text-align: center;
-    display: flex;
+    /* display: flex; */
     justify-content:center;
     align-content:center;
-    flex-direction:column;
+    /* flex-direction:column; */
 
-    font-size: 3vh;
-    /* background-color: #f2f3b5; */
+    /* font-size: 3vh; */
+    
     background-color: #e8e592;
     margin: 0 auto;
     
-    height: 5vh;
+    /* height: 5vh; */
     margin-top: 1vh;
     margin-bottom: 1vh;
     
@@ -29,9 +29,7 @@ html, body
 
 
 #testdiv {    
-    margin: 0 auto;       
-    /* height: 70vh; */
-    /* background-color: #f9f9dc; */
+    margin: 0 auto;
     background-color: #f1f5df;
     margin-bottom: 1vh;
     overflow: scroll;
@@ -47,7 +45,7 @@ html, body
     border-radius: 5px;
     padding: 10px;
     margin: 10px 10px;
-    font-size: 2vh;
+    /* font-size: 2vh; */
 }
 
 .darker {
@@ -56,14 +54,14 @@ html, body
 }
 
 .beingname {
-    font-size: 1.7vh;
+    /* font-size: 1.7vh; */
     color: #888;
 }
 
 
 #characterButton {
     margin-top: 20px;
-    font-size: 2vh;
+    /* font-size: 2vh; */
 }
 
 .characterName {

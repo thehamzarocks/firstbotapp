@@ -164,7 +164,7 @@ export class ChatComponent implements OnInit {
     //     this.inputDisabled = false;
     //   });
 
-    setTimeout(()=>this.GetId(input), 1000);
+    this.GetId(input);
     
   }
 
@@ -220,7 +220,12 @@ export class ChatComponent implements OnInit {
         else if(dialog.type == "cn") {
           console.log("handling compute node");
           this.HandleComputeNode(dialog);
-        }       
+        }
+
+        else if(dialog.type == "en") {
+          console.log(dialog.nextds);
+          this.message.currentdsName = dialog.nextds;          
+        }
         
       }
       
@@ -230,7 +235,7 @@ export class ChatComponent implements OnInit {
   private AutoFetch() {
     console.log(this.message.autofetch);
     if (this.message.autofetch == true) {
-      setTimeout(()=>this.GetId(''), 1000);
+      setTimeout(()=>this.GetId(''), 2000);
       
     }
     else {
@@ -400,7 +405,7 @@ export class ChatComponent implements OnInit {
   }
 
   IntentMatches(input:string, selectorIntent:string): boolean {
-    return input.includes(selectorIntent);
+    return input.toLowerCase().includes(selectorIntent);
   }
 
   
