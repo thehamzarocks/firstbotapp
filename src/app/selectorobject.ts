@@ -1,6 +1,6 @@
 export interface ISelectorObject {
-    statename: String;
-    statevalue: String;
-    intent: String;
+    statename: string;
+    statevalue: string;
+    intent: string;
     nextid: number;
 }

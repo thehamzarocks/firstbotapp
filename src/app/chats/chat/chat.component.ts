@@ -83,7 +83,7 @@ export class ChatComponent implements OnInit {
     }];
 
     this.message = <IMessageObject>{
-      currentdsName: "hotel",
+      currentdsName: "storm",
       currentDialog: "",
       currentIntent: "",
       currentText: "",
@@ -128,7 +128,7 @@ export class ChatComponent implements OnInit {
     
     // this.UpdateCharacterInfo();
     
-    this.GetId();
+    this.GetId('');
   }
 
   //Called when the user hits enter
@@ -144,25 +144,28 @@ export class ChatComponent implements OnInit {
     this.inputText = "";
     this.inputDisabled = true;
     
-    this._firstbotservice.ReceiveFromWit(input)
-      .subscribe(response => {
-        this.badConnection = false;
-        if(response.entities.yes_no == undefined) {
-          this.HandleUnrecognizedResponse();
-        }
-        else {
-          console.log(response.entities.yes_no);
-          var intent: string = response.entities.yes_no[0].value;
-          this.message.currentIntent = intent;
-          this.GetId();
-        }
-    },
-      error => {
-        console.log("Error getting reponse from wit");
-        this.inputText = this.messages.pop().currentText;
-        this.badConnection = true;
-        this.inputDisabled = false;
-      });
+    // this._firstbotservice.ReceiveFromWit(input)
+    //   .subscribe(response => {
+    //     this.badConnection = false;
+    //     if(response.entities.yes_no == undefined) {
+    //       this.HandleUnrecognizedResponse();
+    //     }
+    //     else {
+    //       console.log(response.entities.yes_no);
+    //       var intent: string = response.entities.yes_no[0].value;
+    //       this.message.currentIntent = intent;
+    //       this.GetId();
+    //     }
+    // },
+    //   error => {
+    //     console.log("Error getting reponse from wit");
+    //     this.inputText = this.messages.pop().currentText;
+    //     this.badConnection = true;
+    //     this.inputDisabled = false;
+    //   });
+
+    setTimeout(()=>this.GetId(input), 1000);
+    
   }
 
   private sendMessage() {
@@ -227,7 +230,8 @@ export class ChatComponent implements OnInit {
   private AutoFetch() {
     console.log(this.message.autofetch);
     if (this.message.autofetch == true) {
-      this.GetId();
+      setTimeout(()=>this.GetId(''), 1000);
+      
     }
     else {
       this.inputDisabled = false;
@@ -359,17 +363,21 @@ export class ChatComponent implements OnInit {
         this.message.currentStateValue = "";
         this.message.currentText = "";
 
-        this.GetId();
+        this.GetId('');
       });
   }
 
-  GetId(): void {
+  GetId(input:string): void {
     console.log("getting id");
-    this.GetIdUtil(0);
+    this.GetIdUtil(0, input);
   }
 
-  GetIdUtil(index: number) {
+  GetIdUtil(index: number, input: string) {
     var selector: ISelectorObject = this.selectors[index];
+    if(selector == null) {
+      this.HandleUnrecognizedResponse();
+      return;
+    }
     if(selector.statename != '') {
       var docRef = this.database.collection("/states").doc(selector.statename).ref;
       docRef.get().then((doc)=> {
@@ -378,17 +386,21 @@ export class ChatComponent implements OnInit {
           this.RetrieveDialog(selector.nextid);
         }
         else {
-          this.GetIdUtil(index+1);
+          this.GetIdUtil(index+1, input);
         }
       });
     }  
 
-    else if(selector.statename == '' && selector.intent == this.message.currentIntent) {
+    else if(selector.statename == '' && this.IntentMatches(input, selector.intent)) {
       this.RetrieveDialog(selector.nextid);
     }
     else {
-      this.GetIdUtil(index+1);
+      this.GetIdUtil(index+1, input);
     }
+  }
+
+  IntentMatches(input:string, selectorIntent:string): boolean {
+    return input.includes(selectorIntent);
   }
 
   
