@@ -128,7 +128,7 @@ export class ChatComponent implements OnInit {
     
     // this.UpdateCharacterInfo();
     
-    this.RetrieveDialog();
+    this.GetId();
   }
 
   //Called when the user hits enter
@@ -154,7 +154,7 @@ export class ChatComponent implements OnInit {
           console.log(response.entities.yes_no);
           var intent: string = response.entities.yes_no[0].value;
           this.message.currentIntent = intent;
-          this.RetrieveDialog();
+          this.GetId();
         }
     },
       error => {
@@ -197,8 +197,7 @@ export class ChatComponent implements OnInit {
 
 
   //connects to firestore, gets the object, and assigns it to a message object 
-  RetrieveDialog(): void {
-    var id: number = this.GetId();
+  RetrieveDialog(id: number): void {    
     console.log(id);
     console.log(this.message.currentdsName, this.message.currentIntent);
     var docRef = this.database.collection('/dialogsequences').ref;
@@ -228,7 +227,7 @@ export class ChatComponent implements OnInit {
   private AutoFetch() {
     console.log(this.message.autofetch);
     if (this.message.autofetch == true) {
-      this.RetrieveDialog();
+      this.GetId();
     }
     else {
       this.inputDisabled = false;
@@ -360,48 +359,39 @@ export class ChatComponent implements OnInit {
         this.message.currentStateValue = "";
         this.message.currentText = "";
 
-        this.RetrieveDialog();
+        this.GetId();
       });
   }
 
-  //TODO: handle state selectors too
-  GetId(): number {
+  GetId(): void {
     console.log("getting id");
-    for(var i=0; i<this.selectors.length; i++) {
-      var selector: ISelectorObject = this.selectors[i];
-      if(selector.intent != '') {
-        if(selector.intent == this.message.currentIntent) {
-          if(selector.statename != '') {
-            var docRef = this.database.collection("/states").doc(selector.statename).ref;
-            docRef.get().then((doc)=> {
-              var statevalue = doc.data().statevalue;
-              if(statevalue == selector.statevalue) {
-                return selector.nextid;
-              }
-            });
-          }
-          else if(selector.statename == ''){
-            return selector.nextid;
-          }
+    this.GetIdUtil(0);
+  }
+
+  GetIdUtil(index: number) {
+    var selector: ISelectorObject = this.selectors[index];
+    if(selector.statename != '') {
+      var docRef = this.database.collection("/states").doc(selector.statename).ref;
+      docRef.get().then((doc)=> {
+        var statevalue = doc.data().statevalue;
+        if((statevalue == selector.statevalue) && (this.message.currentIntent == selector.intent)) {
+          this.RetrieveDialog(selector.nextid);
         }
+        else {
+          this.GetIdUtil(index+1);
+        }
+      });
+    }  
+
+    else if(selector.statename == '' && selector.intent == this.message.currentIntent) {
+      this.RetrieveDialog(selector.nextid);
     }
-    else if(selector.intent == '') {
-      if(selector.statename != '') {
-        var docRef = this.database.collection("/states").doc(selector.statename).ref;
-        docRef.get().then((doc)=> {
-          var statevalue = doc.data().statevalue;
-          console.log("state value is ", statevalue);
-          if(statevalue == selector.statevalue) {
-            return selector.nextid;
-          }
-        });
-      }
-      else if(selector.statename == ''){
-        return selector.nextid;
-      }
-    }
+    else {
+      this.GetIdUtil(index+1);
     }
   }
+
+  
        
 
 }
