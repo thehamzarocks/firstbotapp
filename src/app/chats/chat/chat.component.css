@@ -26,16 +26,19 @@ html, body
     border-radius: 5px;
 }
 
+#inputbar {
+    margin-top: 80px;
+}
+
 
 
 #testdiv {    
-    margin: 0 auto;
-    background-color: #f1f5df;
+    margin: 0 auto;    
     margin-bottom: 1vh;
     overflow: scroll;
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
-    border-radius: 5px;
+    border-radius: 5px;    
     
 }
 

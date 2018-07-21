@@ -1,12 +1,11 @@
-<div class="container">  
-  <h1 id="mainheading">FirstBot</h1>
+<div class="container">    
   <div *ngIf="badConnection" class="alert alert-warning fade in">      
       <strong>Dream Fading!</strong> Weak Connection
     </div>
 
     <!-- <button (click)="addData()">Add data</button> -->
-    <div class="input-group">
-      <span class="input-group-addon" (click)="ToggleInfo()"><i class="glyphicon glyphicon-retweet"></i></span>
+    <div class="input-group" id="inputbar">
+      <span class="input-group-addon"><i class="glyphicon glyphicon-retweet"></i></span>
       <div class="wrapper">
         <input autofocus (keyup)="onKey($event)" class="form-control" [(ngModel)]='inputText' placeholder="Type here" name="firstname" type="text" />
         <!-- <div id="infoi"> Will be used later for switching chats
@@ -19,7 +18,7 @@
 
   
   
-  <div *ngIf="!displayInfo" id="testdiv" #scrollMe [scrollTop]="scrollMe.scrollHeight" >
+  <div *ngIf="!displayInfo" #scrollMe [scrollTop]="scrollMe.scrollHeight" >
     <div *ngFor="let message of messages.slice().reverse(); let odd=odd; let even=even" [ngClass]="(even)?'chatcontainer':'chatcontainer darker'"> 
       <p>{{message.currentText}}</p>
       <span class="beingname">{{message.being}}</span>
@@ -27,7 +26,7 @@
   
   </div> 
   
-  <div *ngIf="displayInfo" id="testdiv">     
+  <div *ngIf="displayInfo">
 
       <button (click)="startDS('Red')" id="characterButton" class="btn btn-primary btn-block" type="button">
         <span class="characterName">Red</span>

@@ -12,6 +12,10 @@ import { ChatComponent } from './chats/chat/chat.component';
 import { environment } from '../environments/environment';
 import { ChatBuilderComponent } from './chat-builder/chat-builder.component';
 import { DialogAdder } from './chat-builder/dialog-adder';
+import { AuthComponent } from './auth/auth.component';
+import {RouterModule} from '@angular/router';
+import { AngularFireAuth } from 'angularfire2/auth';
+import { AppComponent } from './app.component';
 
 
 
@@ -19,6 +23,8 @@ import { DialogAdder } from './chat-builder/dialog-adder';
   declarations: [    
     ChatComponent,
     ChatBuilderComponent,
+    AuthComponent,
+    AppComponent,
   ],
   imports: [
     BrowserModule,
@@ -27,13 +33,19 @@ import { DialogAdder } from './chat-builder/dialog-adder';
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule,
     ReactiveFormsModule,
-    AngularDraggableModule
+    AngularDraggableModule,
+    RouterModule.forRoot([      
+      {path:'chat', component:ChatComponent},
+      {path:'welcome', component:AuthComponent},
+      {path:'', redirectTo:'welcome', pathMatch:'full'}
+    ])
     
   ],
   providers: [
     FormBuilder,
-    DialogAdder
+    DialogAdder,
+    AngularFireAuth
   ],
-  bootstrap: [ChatComponent]
+  bootstrap: [AppComponent]
 })
 export class AppModule { }
