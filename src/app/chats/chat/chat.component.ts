@@ -11,6 +11,7 @@ import { EMPTY } from 'rxjs';
 import { ChatService } from './chat.service';
 import { checkAndUpdateDirectiveDynamic } from '@angular/core/src/view/provider';
 import { ISelectorObject } from '../../selectorobject';
+import { queryRefresh } from '@angular/core/src/render3/query';
 
 
 @Component({
@@ -79,6 +80,7 @@ export class ChatComponent implements OnInit {
       statename: '',
       statevalue: '',
       intent: '',
+      points: 0,
       nextid: 0,
     }];
 
@@ -127,8 +129,27 @@ export class ChatComponent implements OnInit {
 
     
     // this.UpdateCharacterInfo();
+    this.afAuth.user.subscribe((user) => {
+      this.database.collection("players").ref.where("name", "==", user.displayName).get().then((querySnapshot) => {
+        if(querySnapshot.docs.length == 0) {
+          this.GetId('');
+        }
+        var doc = querySnapshot.docs[0];
+        var id = doc.id;
+        if(doc.data().points == 130) {
+          this.GetId('');
+        }
+        else {
+          this.database.collection("players").doc(id).ref.update({
+            points: 0,
+          }).then((response) => {
+            console.log("set points to 0");
+            this.GetId('');
+          })
+        }
+      });
+    })
     
-    this.GetId('');
   }
 
   //Called when the user hits enter
@@ -388,6 +409,7 @@ export class ChatComponent implements OnInit {
       docRef.get().then((doc)=> {
         var statevalue = doc.data().statevalue;
         if((statevalue == selector.statevalue) && (this.message.currentIntent == selector.intent)) {
+          this.UpdatePoints(selector.points);
           this.RetrieveDialog(selector.nextid);
         }
         else {
@@ -397,6 +419,7 @@ export class ChatComponent implements OnInit {
     }  
 
     else if(selector.statename == '' && this.IntentMatches(input, selector.intent)) {
+      this.UpdatePoints(selector.points);
       this.RetrieveDialog(selector.nextid);
     }
     else {
@@ -406,6 +429,31 @@ export class ChatComponent implements OnInit {
 
   IntentMatches(input:string, selectorIntent:string): boolean {
     return input.toLowerCase().includes(selectorIntent);
+  }
+
+  UpdatePoints(points: number) {
+    console.log("points are ", points);
+    if(points == undefined) {
+      return;
+    }
+    this.afAuth.user.subscribe((user) => {
+      var playerName: string = user.displayName;
+      var docRef = this.database.collection("players").ref;
+      var query = docRef.where("name", "==", playerName);
+      query.get().then((querySnapShot)=> {
+        var doc = querySnapShot.docs[0];
+        var id = doc.id;
+        var currentPoints: number = doc.data().points;
+        if(currentPoints == 130) {
+          return;
+        }
+        currentPoints = currentPoints + points;
+        console.log("current points are ", currentPoints);
+        this.database.collection("players").doc(id).ref.update({
+          points: currentPoints
+        });
+      });
+    })
   }
 
   
