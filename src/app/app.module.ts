@@ -16,6 +16,7 @@ import { AuthComponent } from './auth/auth.component';
 import {RouterModule} from '@angular/router';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { AppComponent } from './app.component';
+import { HighscoreComponent } from './highscore/highscore.component';
 
 
 
@@ -25,6 +26,7 @@ import { AppComponent } from './app.component';
     ChatBuilderComponent,
     AuthComponent,
     AppComponent,
+    HighscoreComponent,
   ],
   imports: [
     BrowserModule,
@@ -36,6 +38,7 @@ import { AppComponent } from './app.component';
     AngularDraggableModule,
     RouterModule.forRoot([      
       {path:'chat', component:ChatComponent},
+      {path:'highscore', component:HighscoreComponent},
       {path:'welcome', component:AuthComponent},
       {path:'', redirectTo:'welcome', pathMatch:'full'}
     ])
