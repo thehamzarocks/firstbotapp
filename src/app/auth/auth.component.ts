@@ -12,7 +12,8 @@ import { auth } from 'firebase';
   templateUrl: './auth.component.html',
   styleUrls: ['./auth.component.css']
 })
-export class AuthComponent implements OnInit{
+export class AuthComponent implements OnInit{  
+
   constructor(public afAuth: AngularFireAuth) {
   }
   login() {

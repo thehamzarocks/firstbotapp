@@ -1,14 +1,16 @@
 <div class="container">
-<div *ngIf="afAuth.user | async as user; else showLogin">
-  <h1>Hello {{ user.displayName }}!</h1>
-  <ul>
-    <li><a [routerLink]="['/chat']">Chat</a></li>
-  </ul>
-  <button (click)="logout()">Logout</button>
-</div>
-<ng-template #showLogin>
-  <p>Please login.</p>
-  <button (click)="login()">Login with Google</button>      
-</ng-template>
+  <div class="jumbotron">
+    <p>Play through the narrative and see how far you can get.</p>
+  <div *ngIf="afAuth.user | async as user; else showLogin">
+    <p>Welcome, {{ user.displayName }}!</p>
+    <button class="btn btn-info" [routerLink]="['/chat']">Go</button>
+    <br/><br/>
+    <button class="btn" (click)="logout()">Logout</button>
+  </div>
+  <ng-template #showLogin>
+    <p>Please login to continue.</p>
+    <button class="btn btn-info" (click)="login()">Login with Google</button>      
+  </ng-template>
+  </div>
 </div>
 

@@ -1,3 +1,5 @@
+
+<div *ngIf="afAuth.user | async as user; else showLogin">
 <div class="container">    
   <div *ngIf="badConnection" class="alert alert-warning fade in">      
       <strong>Dream Fading!</strong> Weak Connection
@@ -51,3 +53,11 @@
   
 
 </div>
+</div>
+
+<ng-template #showLogin>
+    <div class="container">
+    <p id="login">Please login to continue.</p>
+    <button class="btn btn-info" [routerLink]="['/welcome']">Home</button>
+  </div>
+  </ng-template>

@@ -71,7 +71,7 @@ export class ChatComponent implements OnInit {
     });
   }
 
-  constructor(private _firstbotservice:ChatService, db: AngularFirestore) {
+  constructor(private _firstbotservice:ChatService, db: AngularFirestore, public afAuth: AngularFireAuth) {
     this.database = db;
 
     this.messages = new Array<IMessageObject>();
@@ -95,8 +95,8 @@ export class ChatComponent implements OnInit {
     this.fallback = "I can't help you with that right now."
    }
   
-  ngOnInit() {    
-
+  ngOnInit() {
+    
     this.displayInfo = false;
     this.inputDisabled = true;
     this.badConnection = false;
