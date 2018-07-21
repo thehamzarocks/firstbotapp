@@ -39,8 +39,7 @@ import { HighscoreComponent } from './highscore/highscore.component';
     RouterModule.forRoot([      
       {path:'chat', component:ChatComponent},
       {path:'highscore', component:HighscoreComponent},
-      {path:'welcome', component:AuthComponent},
-      {path:'', redirectTo:'welcome', pathMatch:'full'}
+      {path:'', component:AuthComponent},      
     ])
     
   ],
