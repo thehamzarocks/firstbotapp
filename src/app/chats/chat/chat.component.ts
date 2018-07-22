@@ -132,21 +132,22 @@ export class ChatComponent implements OnInit {
     this.afAuth.user.subscribe((user) => {
       this.database.collection("players").ref.where("name", "==", user.displayName).get().then((querySnapshot) => {
         if(querySnapshot.docs.length == 0) {
-          this.GetId('');
+          console.error("no player with this name exists");
         }
         var doc = querySnapshot.docs[0];
         var id = doc.id;
-        if(doc.data().points == 130) {
-          this.GetId('');
-        }
-        else {
-          this.database.collection("players").doc(id).ref.update({
-            points: 0,
-          }).then((response) => {
-            console.log("set points to 0");
-            this.GetId('');
-          })
-        }
+        this.GetId('');
+        // if(doc.data().points == 130) {
+        //   this.GetId('');
+        // }
+        // else {
+        //   this.database.collection("players").doc(id).ref.update({
+        //     points: 0,
+        //   }).then((response) => {
+        //     console.log("set points to 0");
+        //     this.GetId('');
+        //   })
+        // }
       });
     })
     
@@ -443,14 +444,15 @@ export class ChatComponent implements OnInit {
       query.get().then((querySnapShot)=> {
         var doc = querySnapShot.docs[0];
         var id = doc.id;
+        //the points the player currently has
         var currentPoints: number = doc.data().points;
-        if(currentPoints == 130) {
+        if(currentPoints >= points) {
           return;
         }
-        currentPoints = currentPoints + points;
+        
         console.log("current points are ", currentPoints);
         this.database.collection("players").doc(id).ref.update({
-          points: currentPoints
+          points: points
         });
       });
     })

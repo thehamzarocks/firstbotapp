@@ -19,18 +19,27 @@ export class AuthComponent implements OnInit{
   }
   login() {
     this.afAuth.auth.signInWithPopup(new auth.GoogleAuthProvider()).then((result) => {
-      var name = result.user.displayName;      
+      var name = result.user.displayName;
+      var email = result.user.email;
+      console.log(email);
       var playersRef = this.db.collection("players").ref;
-      var query =playersRef.where("name", "==", name);
+      var query = playersRef.where("email", "==", email);
       query.get().then((querySnapShot) => {        
         if(querySnapShot.docs.length != 0) {
           return;
         } else {
           //need to add to database
           playersRef.add({
+            email: email,
             name: name,
             points: 0,
-          });
+          })
+          .then(() => {
+
+          })
+          .catch((err) => {
+            this.logout();
+          });          
 
           }
         });
