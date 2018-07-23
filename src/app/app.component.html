@@ -1,9 +1,10 @@
 <nav class="navbar navbar-fixed-top navbar-light" style="background-color: #e3f2fd;">
-    <div class="container">
-      <a class="navbar-brand" [routerLink]="['/']">FirstBot</a>    
+  <div class="container">
+    <a class="navbar-brand" [routerLink]="['/']">FirstBot</a>    
+    <div *ngIf="afAuth.user | async as user else showLogin">
       <a class="navbar-brand" [routerLink]="['/highscore']">High Scores</a>
       <a class="navbar-brand" [routerLink]="['/narratives']">Narratives</a>
     </div>
-  </nav>
-  
-  <router-outlet></router-outlet>
+  </div>
+</nav>
+<router-outlet></router-outlet>

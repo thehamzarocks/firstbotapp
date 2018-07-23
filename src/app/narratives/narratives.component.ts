@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { NarrativeService } from './narrative.service';
 
 @Component({
   selector: 'app-narratives',
@@ -7,9 +8,12 @@ import { Component, OnInit } from '@angular/core';
 })
 export class NarrativesComponent implements OnInit {
 
-  constructor() { }
+  
 
-  ngOnInit() {
+  constructor(private narrativeService: NarrativeService) { }
+
+  ngOnInit() {    
+    this.narrativeService.SetAllowedNarratives();
   }
 
 }

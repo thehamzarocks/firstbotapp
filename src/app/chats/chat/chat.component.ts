@@ -73,10 +73,9 @@ export class ChatComponent implements OnInit {
     });
   }
 
-  constructor(private _firstbotservice:ChatService, db: AngularFirestore, public afAuth: AngularFireAuth, private zone:NgZone) {
+  constructor(private _firstbotservice:ChatService, db: AngularFirestore, public afAuth: AngularFireAuth) {
     console.log("loaded constructor");
-    this.database = db;
-    this.zone.run(()=>this.ngOnInit());
+    this.database = db;    
 
     this.messages = new Array<IMessageObject>();
     this.selectors = [{

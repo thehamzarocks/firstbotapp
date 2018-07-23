@@ -34,7 +34,7 @@ import { NarrativesComponent } from './narratives/narratives.component';
   imports: [
     BrowserModule,
     HttpClientModule,
-    FormsModule,
+    FormsModule,    
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule,
     ReactiveFormsModule,
