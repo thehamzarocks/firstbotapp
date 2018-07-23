@@ -2,8 +2,7 @@
   <div class="container">
     <a class="navbar-brand" [routerLink]="['/']">FirstBot</a>    
     <div *ngIf="afAuth.user | async as user else showLogin">
-      <a class="navbar-brand" [routerLink]="['/highscore']">High Scores</a>
-      <a class="navbar-brand" [routerLink]="['/narratives']">Narratives</a>
+      <a class="navbar-brand" [routerLink]="['/highscore']">High Scores</a>      
     </div>
   </div>
 </nav>
