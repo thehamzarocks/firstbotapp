@@ -40,7 +40,7 @@ import { NarrativesComponent } from './narratives/narratives.component';
     ReactiveFormsModule,
     AngularDraggableModule,
     RouterModule.forRoot([
-      {path:'chat', canDeactivate: [ChatdeactivateGuard], component:ChatComponent},
+      {path:'chat/:id', canDeactivate: [ChatdeactivateGuard], component:ChatComponent},
       {path:'highscore', component:HighscoreComponent},
       {path:'narratives', component:NarrativesComponent},
       {path:'', component:AuthComponent},

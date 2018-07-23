@@ -12,6 +12,8 @@ import { ChatService } from './chat.service';
 import { checkAndUpdateDirectiveDynamic } from '@angular/core/src/view/provider';
 import { ISelectorObject } from '../../selectorobject';
 import { queryRefresh } from '@angular/core/src/render3/query';
+import { ActivatedRoute, Router } from '@angular/router';
+import { NarrativeService } from '../../narratives/narrative.service';
 
 
 @Component({
@@ -73,7 +75,8 @@ export class ChatComponent implements OnInit {
     });
   }
 
-  constructor(private _firstbotservice:ChatService, db: AngularFirestore, public afAuth: AngularFireAuth) {
+  constructor(private _firstbotservice:ChatService, db: AngularFirestore, public afAuth: AngularFireAuth, 
+          private narrativeService:NarrativeService, private route: ActivatedRoute, private router: Router) {
     console.log("loaded constructor");
     this.database = db;    
 
@@ -102,6 +105,8 @@ export class ChatComponent implements OnInit {
   ngOnInit() {
 
     console.log("oninit");
+    let id = this.route.snapshot.paramMap.get('id');
+    this.message.currentdsName = this.narrativeService.allowedNarratives[id].dsname;
 
     this.isCompleted = false;
     

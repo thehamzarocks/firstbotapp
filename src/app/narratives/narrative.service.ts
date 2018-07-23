@@ -13,15 +13,18 @@ export class NarrativeService {
     {
       name: "The Storm",
       requiredPoints: 0,
-      description: "A stormy day. Perfect beginning to the perfect adventure."
+      description: "A stormy day. Perfect beginning to the perfect adventure.",
+      dsname: "storm",
     },
     {
       name: "Explosions",
       requiredPoints: 130,
-      description: "Nothing like a few good explosions to liven up your day."
+      description: "Nothing like a few good explosions to liven up your day.",
+      dsname: "explosion"
     },
   ];
 
+  playerPoints: number;
   allowedNarratives: INarrativeObject[];
   
   constructor(private db: AngularFirestore, private afAuth: AngularFireAuth) { 
@@ -37,6 +40,7 @@ export class NarrativeService {
           console.log("error getting player");
         }
         var points = querySnapshot.docs[0].data().points;
+        this.playerPoints = points;
         for(var i=0; i<this.narratives.length; i++) {
           if(this.narratives[i].requiredPoints <= points) {
             this.allowedNarratives.push(this.narratives[i]);

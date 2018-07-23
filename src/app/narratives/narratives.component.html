@@ -1,9 +1,9 @@
 <div class="container">
   <h2>Narratives</h2>
 
-  <div class="jumbotron" *ngFor="let narrative of narrativeService.allowedNarratives">
+  <div class="jumbotron" *ngFor="let narrative of narrativeService.allowedNarratives; let i=index">
     <h3>{{narrative.name}}</h3>
     <p>{{narrative.description}}</p>
-    <button class="btn btn-info">Go</button>
+    <button class="btn btn-info" [routerLink]="['/chat', i]">Go</button>
   </div>
   
