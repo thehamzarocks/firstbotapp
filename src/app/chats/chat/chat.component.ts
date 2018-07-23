@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewChecked, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, AfterViewChecked, ViewChild, ElementRef, NgZone } from '@angular/core';
 import { IIntentObject } from '../../intentobject';
 import { AngularFirestore } from 'angularfire2/firestore';
 import { AngularFireDatabase } from 'angularfire2/database';
@@ -21,6 +21,7 @@ import { queryRefresh } from '@angular/core/src/render3/query';
 })
 export class ChatComponent implements OnInit {
   
+  public isCompleted;
 
   user: Observable<firebase.User>;
   items: Observable<any[]>;
@@ -72,8 +73,10 @@ export class ChatComponent implements OnInit {
     });
   }
 
-  constructor(private _firstbotservice:ChatService, db: AngularFirestore, public afAuth: AngularFireAuth) {
+  constructor(private _firstbotservice:ChatService, db: AngularFirestore, public afAuth: AngularFireAuth, private zone:NgZone) {
+    console.log("loaded constructor");
     this.database = db;
+    this.zone.run(()=>this.ngOnInit());
 
     this.messages = new Array<IMessageObject>();
     this.selectors = [{
@@ -98,6 +101,10 @@ export class ChatComponent implements OnInit {
    }
   
   ngOnInit() {
+
+    console.log("oninit");
+
+    this.isCompleted = false;
     
     this.displayInfo = false;
     this.inputDisabled = true;
@@ -246,7 +253,8 @@ export class ChatComponent implements OnInit {
 
         else if(dialog.type == "en") {
           console.log(dialog.nextds);
-          this.message.currentdsName = dialog.nextds;          
+          this.message.currentdsName = dialog.nextds;
+          this.isCompleted = true;
         }
         
       }

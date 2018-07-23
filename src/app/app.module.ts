@@ -4,7 +4,7 @@ import { FormsModule, ReactiveFormsModule, FormBuilder } from '@angular/forms';
 import { NgModule } from '@angular/core';
 import { AngularDraggableModule } from 'angular2-draggable';
 
-import { AngularFirestoreModule } from 'angularfire2/firestore';
+import { AngularFirestoreModule, AngularFirestore } from 'angularfire2/firestore';
 import { AngularFireModule } from 'angularfire2';
 
 
@@ -17,6 +17,8 @@ import {RouterModule} from '@angular/router';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { AppComponent } from './app.component';
 import { HighscoreComponent } from './highscore/highscore.component';
+import { ChatdeactivateGuard } from './chats/chat/chatdeactivate.guard';
+import { NarrativesComponent } from './narratives/narratives.component';
 
 
 
@@ -27,6 +29,7 @@ import { HighscoreComponent } from './highscore/highscore.component';
     AuthComponent,
     AppComponent,
     HighscoreComponent,
+    NarrativesComponent,
   ],
   imports: [
     BrowserModule,
@@ -36,17 +39,18 @@ import { HighscoreComponent } from './highscore/highscore.component';
     AngularFirestoreModule,
     ReactiveFormsModule,
     AngularDraggableModule,
-    RouterModule.forRoot([      
-      {path:'chat', component:ChatComponent},
+    RouterModule.forRoot([
+      {path:'chat', canDeactivate: [ChatdeactivateGuard], component:ChatComponent},
       {path:'highscore', component:HighscoreComponent},
-      {path:'', component:AuthComponent},      
+      {path:'narratives', component:NarrativesComponent},
+      {path:'', component:AuthComponent},
     ])
     
   ],
   providers: [
     FormBuilder,
     DialogAdder,
-    AngularFireAuth
+    AngularFireAuth,    
   ],
   bootstrap: [AppComponent]
 })

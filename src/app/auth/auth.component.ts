@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { auth } from 'firebase';
 import { AngularFirestore } from 'angularfire2/firestore';
+import { RouterModule, Router } from '@angular/router';
 
 
 @Component({
@@ -15,18 +16,24 @@ import { AngularFirestore } from 'angularfire2/firestore';
 })
 export class AuthComponent implements OnInit{  
 
-  constructor(public afAuth: AngularFireAuth, private db:AngularFirestore) {
+  loginState: string;
+
+  constructor(public afAuth: AngularFireAuth, private db:AngularFirestore, private router:Router) {        
+    this.loginState = "logged out";
   }
-  login() {
-    this.afAuth.auth.signInWithPopup(new auth.GoogleAuthProvider()).then((result) => {
+  login() {    
+    this.loginState = "logging in";
+    // this.loginState = "logged in";
+    this.afAuth.auth.signInWithPopup(new auth.GoogleAuthProvider()).then((result) => {      
       var name = result.user.displayName;
       var email = result.user.email;
       console.log(email);
       var playersRef = this.db.collection("players").ref;
       var query = playersRef.where("email", "==", email);
-      query.get().then((querySnapShot) => {        
+      query.get().then((querySnapShot) => {
         if(querySnapShot.docs.length != 0) {
-          return;
+          console.log(this.loginState);
+          this.router.navigateByUrl("/narratives");
         } else {
           //need to add to database
           playersRef.add({
@@ -35,7 +42,8 @@ export class AuthComponent implements OnInit{
             points: 0,
           })
           .then(() => {
-
+            console.log(this.loginState);
+            this.router.navigateByUrl("/narratives");
           })
           .catch((err) => {
             this.logout();
@@ -47,7 +55,13 @@ export class AuthComponent implements OnInit{
     }    
   
   logout() {
+    console.log("logging out");    
+    this.loginState = "logged out";    
     this.afAuth.auth.signOut();
+  }
+
+  goToNarratives() {
+    this.router.navigate(["/narratives"]);
   }
 
   

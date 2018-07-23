@@ -1,7 +1,7 @@
 <div class="container">
   <div class="jumbotron">
-    <p>Play through the narrative and see how far you can get.</p>
-  <div *ngIf="afAuth.user | async as user; else showLogin">
+    
+  <!-- <div *ngIf="afAuth.user | async as user; else showLogin">
     <p>Welcome, {{ user.displayName }}!</p>
     <button class="btn btn-info" [routerLink]="['/chat']">Go</button>
     <br/><br/>
@@ -10,7 +10,17 @@
   <ng-template #showLogin>
     <p>Please login to continue.</p>
     <button class="btn btn-info" (click)="login()">Login with Google</button>      
+  </ng-template> -->
+    <h2>FirstBot</h2>    
+    <p>Play through immersive narratives and see how far you can get.</p>
+    <div *ngIf="afAuth.user | async as user else showLogin">
+      <button class="btn btn-info" (click)="goToNarratives()">Continue</button>
+    </div>
+    <ng-template #showLogin>      
+        <button class="btn btn-info" (click)="login()">Log in with Google</button>      
   </ng-template>
+  
+    
   </div>
 </div>
 
