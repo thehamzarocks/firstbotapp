@@ -1,27 +1,21 @@
 # Firstbotapp
 
+Play through immersive narratives in this fun browser game and see how far you can get!
+Go to:
+https://firstbot-13b95.firebaseapp.com/
+
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 6.0.8.
 
-## Development server
+## Running locally
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
-## Code scaffolding
+## Building you own narratives:
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+Will provide links to an easy-to-use widget you can use to build your own narratives using a drag-and-drop interface.
 
-## Build
+## Contributing
+If you have ideas for your own narratives, you're welcome to fork this repository and indulge!
+If you believe you have amazing ideas for this project, or want to contribute directly in any way, don't despair! I'll set up a communication channel soon.
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
-
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+In the meantime, keep playing and have fun!
